@@ -120,9 +120,9 @@ superDuperModeNavListener = eventtap.new({ eventTypes.keyDown }, function(event)
   end
 
   local charactersToKeystrokes = {
-    h = 'left',
-    j = 'down',
-    k = 'up',
+    j = 'left',
+    k = 'down',
+    i = 'up',
     l = 'right',
   }
 
@@ -150,21 +150,22 @@ end):start()
 -- Watch for i/o key down events in Super Duper Mode, and trigger the
 -- corresponding key events to navigate to the previous/next tab respectively
 --------------------------------------------------------------------------------
-superDuperModeTabNavKeyListener = eventtap.new({ eventTypes.keyDown }, function(event)
-  if not superDuperMode.active then
-    return false
-  end
-
-  local charactersToKeystrokes = {
-    u = { {'cmd'}, '1' },          -- go to first tab
-    i = { {'cmd', 'shift'}, '[' }, -- go to previous tab
-    o = { {'cmd', 'shift'}, ']' }, -- go to next tab
-    p = { {'cmd'}, '9' },          -- go to last tab
-  }
-  local keystroke = charactersToKeystrokes[event:getCharacters()]
-
-  if keystroke then
-    keyUpDown(table.unpack(keystroke))
-    return true
-  end
-end):start()
+-- superDuperModeTabNavKeyListener = eventtap.new({ eventTypes.keyDown }, function(event)
+--   if not superDuperMode.active then
+--     return false
+--   end
+--
+--   local charactersToKeystrokes = {
+--     u = { {'cmd'}, '1' },          -- go to first tab
+--     i = { {'cmd', 'shift'}, '[' }, -- go to previous tab
+--     o = { {'cmd', 'shift'}, ']' }, -- go to next tab
+--     p = { {'cmd'}, '9' },          -- go to last tab
+--   }
+--   local keystroke = charactersToKeystrokes[event:getCharacters()]
+--
+--   if keystroke then
+--     keyUpDown(table.unpack(keystroke))
+--     return true
+--   end
+-- end):start()
+--
