@@ -19,7 +19,7 @@
                             {
                                 "description": "Change right option to Hyper (i.e., command+control+option+shift)",
                                 "from": {
-                                    "key_code": "right_gui",
+                                    "key_code": "right_option",
                                     "modifiers": {
                                         "optional": [
                                             "any"
