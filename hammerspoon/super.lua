@@ -152,7 +152,13 @@ superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, functio
   end
 
   if (type(app) == 'string') then
-    hs.application.open(app)
+    local frontmostApp = hs.application.frontmostApplication()
+    local openApp = hs.application.get(app)
+    if openApp and frontmostApp:name() == openApp:name() then
+      hs.eventtap.keyStroke({'command'}, '`', 0)
+    else
+      hs.application.open(app)
+    end
   elseif (type(app) == 'function') then
     app()
   end
