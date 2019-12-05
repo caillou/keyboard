@@ -134,7 +134,7 @@ local superDuperModeAppMappings = {
   c = 'Slack',
   e = 'Visual Studio Code',
   f = 'Finder',
-  s = 'Slack',
+  s = 'Spotify',
   t = 'iTerm',
 }
 
