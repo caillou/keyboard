@@ -8,6 +8,15 @@ state.isActive = false
 state.outputNextSpace = false
 state.isTyping = false
 
+local modifiers = function (event)
+  local modifiers = {}
+  -- Apply the standard modifier keys that are active (if any)
+  for k, v in pairs(event:getFlags()) do
+    table.insert(modifiers, k)
+  end
+  return modifiers
+end
+
 local typingTimer
 
 superDuperModeTyping = eventtap.new({ eventTypes.keyDown }, function(event)
@@ -87,7 +96,7 @@ superDuperModeDeactivationListener = eventtap.new({ eventTypes.keyUp }, function
     if not state.wasUsed then
       state.outputNextSpace = true
       hs.timer.doAfter(0, function ()
-        hs.eventtap.keyStroke({}, 'space', 0)
+        hs.eventtap.keyStroke(modifiers(event), 'space', 0)
       end)
     end
 
@@ -115,12 +124,7 @@ superDuperModeNavigation = eventtap.new({ eventTypes.keyDown }, function(event)
 
     state.wasUsed = true
 
-    local modifiers = {}
-    -- Apply the standard modifier keys that are active (if any)
-    for k, v in pairs(event:getFlags()) do
-      table.insert(modifiers, k)
-    end
-    hs.eventtap.keyStroke(modifiers, mappedKey, 0)
+    hs.eventtap.keyStroke(modifiers(event), mappedKey, 0)
     return true
   end
 
