@@ -37,8 +37,6 @@ superDuperModeTyping = eventtap.new({ eventTypes.keyDown }, function(event)
   end
 
   typingTimer = hs.timer.doAfter(0.3, function()
-    hs.logger.new('hyper'):e('done typing')
-
     state.isTyping = false
   end)
 end):start()
