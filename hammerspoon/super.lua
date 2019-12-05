@@ -1,21 +1,70 @@
 local eventtap = hs.eventtap
 local eventTypes = hs.eventtap.event.types
 
+local logger = hs.logger.new('super')
+
 local state = {}
 state.isActive = false
 state.outputNextSpace = false
+state.isTyping = false
+
+local typingTimer
+
+superDuperModeTyping = eventtap.new({ eventTypes.keyDown }, function(event)
+  if state.isActive then
+    return
+  end
+
+  local character = event:getCharacters()
+
+  if character == ' ' then
+    return
+  end
+
+  state.isTyping = true
+
+  if typingTimer then
+    typingTimer:stop()
+  end
+
+  typingTimer = hs.timer.doAfter(0.3, function()
+    hs.logger.new('hyper'):e('done typing')
+
+    state.isTyping = false
+  end)
+end):start()
+
+local wasUsedTimer
 
 superDuperModeActivationListener = eventtap.new({ eventTypes.keyDown }, function(event)
+
+  if state.isTyping then
+    return
+  end
+
   local character = event:getCharacters()
-  hs.logger.new('hyper'):e('down:', character)
+
+  if state.isActive then
+    if character == ' ' then return true end
+    return
+  end
 
   if character == ' ' then
     if not state.outputNextSpace then
-      hs.logger.new('hyper'):e('down-enter', character)
-      -- prevent the printing of the space
+
+      -- We are now in the SuperDuperMode
       state.isActive = true
       state.wasUsed = false
+
+      -- If we hold space for a while without using it, we don't
+      -- want to output a space.
+      if typingTimer then typingTimer:stop() end
+      typingTimer = hs.timer.doAfter(0.4, function()
+        state.wasUsed = true
+      end)
+
       return true
+
     else
       state.outputNextSpace = false
     end
@@ -24,12 +73,13 @@ superDuperModeActivationListener = eventtap.new({ eventTypes.keyDown }, function
 end):start()
 
 superDuperModeDeactivationListener = eventtap.new({ eventTypes.keyUp }, function(event)
-
-  local character = event:getCharacters()
-  hs.logger.new('hyper'):e('up:', character)
   if not state.isActive then
     return
   end
+
+
+  local character = event:getCharacters()
+
   if character == ' ' then
 
     state.isActive = false
@@ -44,89 +94,67 @@ superDuperModeDeactivationListener = eventtap.new({ eventTypes.keyUp }, function
     return
   end
 
-  state.wasUsed = true
+end):start()
+
+local keyMap = {
+  i = 'up', -- 34
+  j = 'left', -- 38
+  k = 'down', -- 40
+  l = 'right', -- 37
+}
+
+superDuperModeNavigation = eventtap.new({ eventTypes.keyDown }, function(event)
+
+  if not state.isActive then
+    return
+  end
+
+  local mappedKey = keyMap[event:getCharacters()]
+
+  if mappedKey then
+
+    state.wasUsed = true
+
+    local modifiers = {}
+    -- Apply the standard modifier keys that are active (if any)
+    for k, v in pairs(event:getFlags()) do
+      table.insert(modifiers, k)
+    end
+    hs.eventtap.keyStroke(modifiers, mappedKey, 0)
+    return true
+  end
 
 end):start()
 
--- --------------------------------------------------------------------------------
--- -- Watch for key down/up events that represent modifiers in Super Duper Mode
--- --------------------------------------------------------------------------------
--- superDuperModeModifierKeyListener = eventtap.new({ eventTypes.keyDown, eventTypes.keyUp }, function(event)
---   if not superDuperMode.active then
---     return false
---   end
 
---   local charactersToModifers = {}
---   charactersToModifers['a'] = 'alt'
---   charactersToModifers['f'] = 'cmd'
---   charactersToModifers[' '] = 'shift'
+local superDuperModeAppMappings = {
+  b = 'Google Chrome',
+  c = 'Slack',
+  e = 'Visual Studio Code',
+  f = 'Finder',
+  s = 'Slack',
+  t = 'iTerm',
+}
 
---   local modifier = charactersToModifers[event:getCharacters()]
---   if modifier then
---     if (event:getType() == eventTypes.keyDown) then
---       superDuperMode.modifiers[modifier] = true
---     else
---       superDuperMode.modifiers[modifier] = nil
---     end
---     return true
---   end
--- end):start()
+superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, function(event)
 
--- --------------------------------------------------------------------------------
--- -- Watch for h/j/k/l key down events in Super Duper Mode, and trigger the
--- -- corresponding arrow key events
--- --------------------------------------------------------------------------------
--- superDuperModeNavListener = eventtap.new({ eventTypes.keyDown }, function(event)
---   if not superDuperMode.active then
---     return false
---   end
+  if not state.isActive then
+    return
+  end
 
---   local charactersToKeystrokes = {
---     j = 'left',
---     k = 'down',
---     i = 'up',
---     l = 'right',
---   }
+  local character = event:getCharacters()
+  local app = superDuperModeAppMappings[character]
 
---   local keystroke = charactersToKeystrokes[event:getCharacters(true):lower()]
---   if keystroke then
---     local modifiers = {}
---     n = 0
---     -- Apply the custom Super Duper Mode modifier keys that are active (if any)
---     for k, v in pairs(superDuperMode.modifiers) do
---       n = n + 1
---       modifiers[n] = k
---     end
---     -- Apply the standard modifier keys that are active (if any)
---     for k, v in pairs(event:getFlags()) do
---       n = n + 1
---       modifiers[n] = k
---     end
+  if not app then
+    return
+  end
 
---     keyUpDown(modifiers, keystroke)
---     return true
---   end
--- end):start()
+  if (type(app) == 'string') then
+    hs.application.open(app)
+  elseif (type(app) == 'function') then
+    app()
+  end
 
--- --------------------------------------------------------------------------------
--- -- Watch for i/o key down events in Super Duper Mode, and trigger the
--- -- corresponding key events to navigate to the previous/next tab respectively
--- --------------------------------------------------------------------------------
--- superDuperModeTabNavKeyListener = eventtap.new({ eventTypes.keyDown }, function(event)
---   if not superDuperMode.active then
---     return false
---   end
+  return true
 
---   local charactersToKeystrokes = {
---     -- u = { {'cmd'}, '1' },          -- go to first tab
---     u = { {'cmd', 'shift'}, '[' }, -- go to previous tab
---     o = { {'cmd', 'shift'}, ']' }, -- go to next tab
---     -- p = { {'cmd'}, '9' },          -- go to last tab
---   }
---   local keystroke = charactersToKeystrokes[event:getCharacters()]
-
---   if keystroke then
---     keyUpDown(table.unpack(keystroke))
---     return true
---   end
--- end):start()
+end):start()
