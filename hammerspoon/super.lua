@@ -7,6 +7,7 @@ local state = {}
 state.isActive = false
 state.outputNextSpace = false
 state.isTyping = false
+state.training = true
 
 local modifiers = function (event)
   local modifiers = {}
@@ -120,9 +121,9 @@ superDuperModeNavigation = eventtap.new({ eventTypes.keyDown }, function(event)
 
   if mappedKey then
 
-    state.wasUsed = true
-
     hs.eventtap.keyStroke(modifiers(event), mappedKey, 0)
+
+    state.wasUsed = true
     return true
   end
 
@@ -136,6 +137,9 @@ local superDuperModeAppMappings = {
   f = 'Finder',
   s = 'Spotify',
   t = 'iTerm',
+  a = function ()
+    state.training = not state.training
+  end
 }
 
 superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, function(event)
@@ -163,6 +167,17 @@ superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, functio
     app()
   end
 
+  state.wasUsed = true
   return true
 
+end):start()
+
+superDuperModeNavigationTraining = eventtap.new({ eventTypes.keyDown }, function(event)
+  if not state.training or state.isActive then return end
+
+  local keycode = event:getKeyCode()
+
+  if keycode <= 126 and keycode >= 123 then -- the arrow keys
+    return true
+  end
 end):start()
