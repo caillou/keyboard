@@ -33,30 +33,8 @@ local keyMap = {
 
 local state = {}
 state.isActive = false
-state.isTyping = false
-
-eventtap.new({ eventTypes.keyDown }, function (event)
-  if state.isActive then
-    return
-  end
-
-  local kc = event:getKeyCode()
-
-  if kc == 79 then -- f18 key
-    return
-  end
-
-  state.isTyping = true
-  hs.timer.doAfter(0.3, function()
-    state.isTyping = false
-  end)
-end)
 
 superDuperModeActivationListener = eventtap.new({ eventTypes.keyDown }, function(event)
-
-  if state.isTyping then
-    return
-  end
 
   local kc = event:getKeyCode()
   -- hs.logger.new('hyper'):e(kc)
