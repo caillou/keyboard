@@ -117,7 +117,8 @@ superDuperModeNavigation = eventtap.new({ eventTypes.keyDown }, function(event)
     return
   end
 
-  local mappedKey = keyMap[event:getCharacters()]
+  local keyCode = event:getKeyCode()
+  local mappedKey = keyMap[hs.keycodes.map[keyCode]]
 
   if mappedKey then
 
