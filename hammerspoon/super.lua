@@ -187,6 +187,7 @@ superDuperModeNavigationTraining = eventtap.new({ eventTypes.keyDown }, function
   local keycode = event:getKeyCode()
 
   if keycode <= 126 and keycode >= 123 then -- the arrow keys
+    hs.alert.show("Nope!")
     return true
   end
 end):start()
