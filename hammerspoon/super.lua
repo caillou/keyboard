@@ -140,7 +140,15 @@ local superDuperModeAppMappings = {
   t = 'iTerm',
   a = function ()
     state.training = not state.training
-  end
+  end,
+  u = function ()
+    -- Go to previous tab in most apps
+    hs.eventtap.keyStroke({'cmd', 'shift'}, '[', 0)
+  end,
+  o = function ()
+    -- Go to next tab in most apps
+    hs.eventtap.keyStroke({'cmd', 'shift'}, ']', 0)
+  end,
 }
 
 superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, function(event)
