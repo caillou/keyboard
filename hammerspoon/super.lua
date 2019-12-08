@@ -25,9 +25,9 @@ superDuperModeTyping = eventtap.new({ eventTypes.keyDown }, function(event)
     return
   end
 
-  local character = event:getCharacters()
+  local keyCode = event:getKeyCode()
 
-  if character == ' ' then
+  if keyCode == 49 then -- 49 == space
     return
   end
 
@@ -50,14 +50,14 @@ superDuperModeActivationListener = eventtap.new({ eventTypes.keyDown }, function
     return
   end
 
-  local character = event:getCharacters()
+  local keyCode = event:getKeyCode()
 
   if state.isActive then
-    if character == ' ' then return true end
+    if keyCode == 49 then return true end -- 49 == space
     return
   end
 
-  if character == ' ' then
+  if keyCode == 49 then  -- 49 == space
     if not state.outputNextSpace then
 
       -- We are now in the SuperDuperMode
@@ -85,10 +85,9 @@ superDuperModeDeactivationListener = eventtap.new({ eventTypes.keyUp }, function
     return
   end
 
+  local keyCode = event:getKeyCode()
 
-  local character = event:getCharacters()
-
-  if character == ' ' then
+  if keyCode == 49 then  -- 49 == space
 
     state.isActive = false
 
