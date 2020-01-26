@@ -137,6 +137,7 @@ local superDuperModeAppMappings = {
   f = 'Finder',
   s = 'Spotify',
   t = 'iTerm',
+  n = 'Notes',
   a = function ()
     state.training = not state.training
   end,
@@ -147,6 +148,9 @@ local superDuperModeAppMappings = {
   o = function ()
     -- Go to next tab in most apps
     hs.eventtap.keyStroke({'cmd', 'shift'}, ']', 0)
+  end,
+  v = function ()
+    hs.eventtap.keyStroke({'control', 'option'}, 'v', 0)
   end,
 }
 
