@@ -25,9 +25,9 @@ superDuperModeTyping = eventtap.new({ eventTypes.keyDown }, function(event)
     return
   end
 
-  local keyCode = event:getKeyCode()
+  local keycode = event:getKeyCode()
 
-  if keyCode == 49 then -- 49 == space
+  if keycode == 49 then -- 49 == space
     return
   end
 
@@ -50,14 +50,14 @@ superDuperModeActivationListener = eventtap.new({ eventTypes.keyDown }, function
     return
   end
 
-  local keyCode = event:getKeyCode()
+  local keycode = event:getKeyCode()
 
   if state.isActive then
-    if keyCode == 49 then return true end -- 49 == space
+    if keycode == 49 then return true end -- 49 == space
     return
   end
 
-  if keyCode == 49 then  -- 49 == space
+  if keycode == 49 then  -- 49 == space
     if not state.outputNextSpace then
 
       -- We are now in the SuperDuperMode
@@ -85,9 +85,9 @@ superDuperModeDeactivationListener = eventtap.new({ eventTypes.keyUp }, function
     return
   end
 
-  local keyCode = event:getKeyCode()
+  local keycode = event:getKeyCode()
 
-  if keyCode == 49 then  -- 49 == space
+  if keycode == 49 then  -- 49 == space
 
     state.isActive = false
 
@@ -116,8 +116,8 @@ superDuperModeNavigation = eventtap.new({ eventTypes.keyDown }, function(event)
     return
   end
 
-  local keyCode = event:getKeyCode()
-  local mappedKey = keyMap[hs.keycodes.map[keyCode]]
+  local keycode = event:getKeyCode()
+  local mappedKey = keyMap[hs.keycodes.map[keycode]]
 
   if mappedKey then
 
