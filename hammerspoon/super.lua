@@ -194,3 +194,80 @@ superDuperModeNavigationTraining = eventtap.new({ eventTypes.keyDown }, function
     return true
   end
 end):start()
+
+-- local leftShift = false
+-- local rightShift = false
+
+-- local leftHandKeycode = function (keycode)
+--   return (keycode >= 0 and keycode <= 3) or (keycode >= 5 and keycode <= 9) or
+--   (keycode >= 18 and keycode <= 21) or (keycode >= 12 and keycode <= 15) or
+--   (keycode == 17) or (keycode == 23) or
+--   (keycode == 50)
+-- end
+
+-- superDuperModeTouchTypingTraining = eventtap.new({ eventTypes.keyDown }, function(event)
+--   -- if not state.training or state.isActive then return end
+--   if not state.leftShift and not state.rightShift then
+--     return
+--   end
+
+--   local keycode = event:getKeyCode()
+--   local isLeftKey = leftHandKeycode(keycode)
+
+--   if state.leftShift and isLeftKey then
+--     hs.alert.show("Nope!")
+--     return true
+--   end
+
+--   -- if keycode <= 126 and keycode >= 123 then -- the arrow keys
+--   --   hs.alert.show("Nope!")
+--   --   return true
+--   -- end
+-- end):start()
+
+-- local right_shift_handler = function(evt)
+--   if not evt:getFlags()['shift'] then
+--     state.leftShift = false
+--     state.rightShift = false
+--     return
+--   end
+--   local keycode = evt:getKeyCode()
+--   logger:e(keycode)
+--   if keycode == 56 then
+--     state.leftShift = true
+--     state.rightShift = false
+--     return
+--   end
+--   if keycode == 60 then
+--     state.leftShift = false
+--     state.rightShift = true
+--     return
+--   end
+
+-- end
+
+-- local right_shift_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, right_shift_handler)
+-- right_shift_tap:start()
+
+-- -- -- local rightAlphas = {
+-- -- --   ~ = true,
+-- -- --   ! = true,
+-- -- --   @ = true,
+-- -- --   # = true,
+-- -- --   $ = true,
+-- -- --   % = true,
+-- -- --   Q = true,
+-- -- --   W = true,
+-- -- --   E = true,
+-- -- --   R = true,
+-- -- --   T = true,
+-- -- --   A = true,
+-- -- --   S = true,
+-- -- --   D = true,
+-- -- --   F = true,
+-- -- --   G = true,
+-- -- --   Z = true,
+-- -- --   X = true,
+-- -- --   C = true,
+-- -- --   V = true,
+-- -- -- }
