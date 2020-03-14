@@ -131,13 +131,13 @@ end):start()
 
 
 local superDuperModeAppMappings = {
-  b = 'Google Chrome',
-  c = 'Slack',
-  e = 'Visual Studio Code',
-  f = 'Finder',
-  s = 'Spotify',
-  t = 'iTerm',
-  n = 'Notes',
+  -- b = 'Google Chrome',
+  -- c = 'Slack',
+  -- e = 'Visual Studio Code',
+  -- f = 'Finder',
+  -- s = 'Spotify',
+  -- t = 'iTerm',
+  -- n = 'Notes',
   a = function ()
     state.training = not state.training
   end,
