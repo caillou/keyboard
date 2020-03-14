@@ -13,15 +13,15 @@ local itermHotkeyMappings = {
 
   -- Use control + h/j/k/l to move left/down/up/right by one pane
   {
-    from = {{'ctrl'}, 'h'},
+    from = {{'ctrl'}, 'j'},
     to   = {{'cmd', 'alt'}, 'left'}
   },
   {
-    from = {{'ctrl'}, 'j'},
+    from = {{'ctrl'}, 'k'},
     to   = {{'cmd', 'alt'}, 'down'}
   },
   {
-    from = {{'ctrl'}, 'k'},
+    from = {{'ctrl'}, 'i'},
     to   = {{'cmd', 'alt'}, 'up'}
   },
   {
