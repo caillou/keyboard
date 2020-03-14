@@ -152,6 +152,10 @@ local superDuperModeAppMappings = {
   v = function ()
     hs.eventtap.keyStroke({'control', 'option'}, 'v', 0)
   end,
+  d = function (event)
+    -- Go to previous tab in most apps
+    hs.eventtap.keyStroke(modifiers(event), 'delete', 0)
+  end,
 }
 
 superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, function(event)
@@ -176,7 +180,7 @@ superDuperModeApplicationSwitcher = eventtap.new({ eventTypes.keyDown }, functio
       hs.application.open(app)
     end
   elseif (type(app) == 'function') then
-    app()
+    app(event)
   end
 
   state.wasUsed = true
