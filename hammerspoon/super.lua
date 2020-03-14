@@ -153,8 +153,32 @@ local superDuperModeAppMappings = {
     hs.eventtap.keyStroke({'control', 'option'}, 'v', 0)
   end,
   d = function (event)
-    -- Go to previous tab in most apps
-    hs.eventtap.keyStroke(modifiers(event), 'delete', 0)
+    -- (
+    hs.eventtap.keyStroke({'shift'}, '9', 0)
+  end,
+  f = function (event)
+    -- )
+    hs.eventtap.keyStroke({'shift'}, '0', 0)
+  end,
+  e = function (event)
+    -- {
+    hs.eventtap.keyStroke({'shift'}, '[', 0)
+  end,
+  r = function (event)
+    -- }
+    hs.eventtap.keyStroke({'shift'}, ']', 0)
+  end,
+  x = function (event)
+    --
+    hs.eventtap.keyStroke({}, '[', 0)
+  end,
+  c = function (event)
+    --
+    hs.eventtap.keyStroke({}, ']', 0)
+  end,
+  h = function (event)
+    --
+    hs.eventtap.keyStroke({}, 'delete', 0)
   end,
 }
 
@@ -193,7 +217,10 @@ superDuperModeNavigationTraining = eventtap.new({ eventTypes.keyDown }, function
 
   local keycode = event:getKeyCode()
 
-  if keycode <= 126 and keycode >= 123 then -- the arrow keys
+  local isDelete = keycode == 51
+  local isArrow = keycode <= 126 and keycode >= 123
+
+  if isArrow or isDelete then -- the arrow keys
     hs.alert.show("Nope!")
     return true
   end
