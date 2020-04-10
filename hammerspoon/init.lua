@@ -38,6 +38,7 @@ require('keyboard.control-escape')
 -- require('keyboard.panes')
 require('keyboard.super')
 require('keyboard.windows')
+require('keyboard.scroll-with-trackpoint')
 
 hs.notify.new({
   title='Hammerspoon',
