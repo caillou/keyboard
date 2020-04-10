@@ -7,7 +7,7 @@ local state = {}
 state.isActive = false
 state.outputNextSpace = false
 state.isTyping = false
-state.training = true
+state.training = false
 
 local modifiers = function (event)
   local modifiers = {}
