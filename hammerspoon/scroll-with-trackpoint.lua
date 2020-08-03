@@ -12,6 +12,7 @@ overrideOtherMouseDown = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDow
     if scrollMouseButton == pressedMouseButton
         then
             deferred = true
+            dragOtherToScroll:start()
             return true
         end
 end)
@@ -21,6 +22,7 @@ overrideOtherMouseUp = hs.eventtap.new({ hs.eventtap.event.types.otherMouseUp },
     local pressedMouseButton = e:getProperty(hs.eventtap.event.properties['mouseEventButtonNumber'])
     if scrollMouseButton == pressedMouseButton
         then
+            dragOtherToScroll:stop()
             if (deferred) then
                 overrideOtherMouseDown:stop()
                 overrideOtherMouseUp:stop()
@@ -59,4 +61,3 @@ end)
 
 overrideOtherMouseDown:start()
 overrideOtherMouseUp:start()
-dragOtherToScroll:start()
