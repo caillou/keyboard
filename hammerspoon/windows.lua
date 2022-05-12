@@ -1,3 +1,4 @@
+local log = hs.logger.new('init.lua', 'debug')
 hs.window.animationDuration = 0
 
 -- +-----------------+
@@ -256,9 +257,12 @@ for i, mapping in ipairs(mappings) do
   end
 
   windowLayoutMode:bindWithAutomaticExit(modifiers, trigger, function()
-    --example: hs.window.focusedWindow():upRight()
     local fw = hs.window.focusedWindow()
-    fw[winFunction](fw)
+    if fw[winFunction] then
+      fw[winFunction](fw)
+    else
+      hs.window[winFunction](fw)
+    end
   end)
 end
 
