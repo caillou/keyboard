@@ -27,4 +27,8 @@ Runs the busted spec suite against the space-fn state machine. For interactive i
 make test-watch
 ```
 
-See `CLAUDE.md` for the architecture overview and the rationale behind the test setup.
+## Formatting, linting, and editor setup
+
+Format with `make fmt` (check-only: `make fmt-check`) and lint with `make lint`. Opening the repo in VS Code prompts to install the recommended extensions and gives `hs.*` autocomplete, hover docs, and go-to-definition.
+
+See `CLAUDE.md` for the architecture overview and the rationale behind the test and tooling setup.

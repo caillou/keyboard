@@ -43,6 +43,20 @@ The space-fn engine is the first piece of code in this repo non-trivial enough t
 
 Only `space-fn-engine.lua` is unit-tested. The adapter (`space-fn.lua`) is glue around `hs.eventtap`, `hs.timer`, and `hs.eventtap.keyStroke`; testing it would mean mocking the Hammerspoon runtime. The adapter is verified by using the keyboard.
 
+## Editor and tooling
+
+A small, conventional Lua toolchain mirrors what a JS/TS developer expects (formatter, linter, language server), configured so the tools never fight each other. Three tools, each owning exactly one concern:
+
+- **StyLua** — the formatter (the prettier analog). Owns *all* formatting. Config in `stylua.toml` at the repo root (2-space indent, single quotes, ~100 column) matched to the existing house style, so adopting it is near-zero churn. Run via `make fmt` (writes) and `make fmt-check` (verifies, non-zero exit on drift). Installed via Homebrew (`brew "stylua"`), so the CLI and the VS Code extension share one binary. Runs on save in VS Code.
+- **lua-language-server / LuaLS** — the language server: IntelliSense, hover docs, go-to-definition, and type/reference diagnostics. Ships inside the VS Code "Lua" extension (`sumneko.lua`), so nothing extra is installed for it. **Its own formatter is disabled** (`Lua.format.enable = false`) so it does not fight StyLua.
+- **luacheck** — the linter (the eslint analog), scoped to logic only (unused vars, undefined globals, shadowing, unreachable code). All formatting and whitespace checks are switched off in `.luacheckrc` (notably `max_line_length = false` plus the W6xx family) so it never contradicts StyLua — the luacheck analog of `eslint-config-prettier`. `.luacheckrc` also declares `hs` as a read global and applies busted's standard set to `spec/`. Run via `make lint`. Installed via LuaRocks into the project-local `lua_modules/` tree, alongside busted. Note: luacheck must build against `lua@5.4` (keg-only, declared in the `Brewfile`) — its source reassigns generic-for loop variables, which Lua 5.5 rejects; `script/setup` handles this with `--lua-version=5.4`.
+
+The separation is the whole point: StyLua formats, luacheck lints logic with formatting checks off, LuaLS's formatter is off. The only tool that formats is StyLua, so there is no eslint-vs-prettier conflict.
+
+**`hs.*` autocomplete (EmmyLua stubs).** Editor awareness of the Hammerspoon API comes from a vendored generator at `hammerspoon/Spoons/EmmyLua.spoon` (MIT, committed unmodified; provenance in its `UPSTREAM.md`). It is a build-time code generator: when Hammerspoon loads it (a guarded `pcall(hs.loadSpoon, 'EmmyLua')` in `init.lua`), it introspects the live, installed `hs` API and writes EmmyLua annotation stubs (the Lua equivalent of TypeScript `.d.ts` files) into `annotations/`. LuaLS reads those stubs (via `Lua.workspace.library` in `.vscode/settings.json`) and provides full `hs.*` autocomplete and signatures. Because the stubs are generated from the installed Hammerspoon version, they cannot drift out of sync with it. The generator guards itself on file mtimes, so it regenerates only when Hammerspoon's docs change (i.e. after a Hammerspoon upgrade) and short-circuits cheaply on ordinary reloads. The `annotations/` directory is gitignored (machine-specific generated output). `script/setup` symlinks `~/.hammerspoon/Spoons/EmmyLua.spoon` to the vendored copy so the generator's writes land inside the repo. To refresh the *generator itself* (rare, deliberate), run `make update-emmylua` (delegates to `script/update-emmylua`, which re-vendors the latest upstream Spoon).
+
+The VS Code config travels with the repo via committed `.vscode/settings.json` and `.vscode/extensions.json`, so opening the repo prompts to install the recommended extensions (`sumneko.lua`, `JohnnyMorganz.stylua`) and applies the no-conflict settings automatically. Open the repo at its real location, not the `~/.hammerspoon/keyboard` symlink — LuaLS resolves poorly through symlinked roots.
+
 ## Gitignored local overrides
 
 - `hammerspoon/windows-bindings.lua` — user's personal window-layout key map. Copy `windows-bindings-defaults.lua` to create one.
@@ -69,10 +83,8 @@ Only `space-fn-engine.lua` is unit-tested. The adapter (`space-fn.lua`) is glue 
   - `hs.ipc` — `hs` CLI tool
   - `hs.logger`, `hs.notify`, `hs.fnutils`, `hs.keycodes`
 
-## Deliberate non-choices
+## Dependencies: a case-by-case principle
 
-A future agent reading generic Hammerspoon advice (e.g. blog posts, the "hammerspoon" plugin skill) will see these suggestions. **Don't apply them here** without asking:
+There is no blanket ban on dependencies (Spoons, rocks, extensions). Each is evaluated on its merits — weighing not-invented-here against needless complexity, and favoring good developer experience and current best practices. A future agent reading generic Hammerspoon advice (blog posts, the "hammerspoon" plugin skill) should apply that judgement rather than reach for or reject a tool reflexively. The dev toolchain above (StyLua, luacheck, LuaLS, the vendored EmmyLua.spoon) is exactly this principle in action: each earns its place by improving the editing experience, and the vendored EmmyLua.spoon needs no special carve-out — it is a dev-only tooling Spoon for editor autocomplete, not part of the runtime keyboard logic.
 
-- **Spoons / SpoonInstall** — not used. The repo is a handful of files loaded with plain `require`; a plugin system adds ceremony with no benefit at this size.
-- **ShiftIt** (or `WindowHalfsAndThirds`, `MiroWindowsManager`, etc.) — not used. The custom `windows.lua` supports non-standard layouts (`left40`, `right60`, `centerWithFullHeight`) that those Spoons don't, so swapping in a Spoon would be a regression.
-- **`ReloadConfiguration` Spoon** — not used; the inline `hs.pathwatcher` in `init.lua` does the same job in ~6 lines.
+One recorded rationale worth keeping (not dogma, just so nobody regresses it): **`windows.lua` is hand-rolled rather than a stock window-manager Spoon** (ShiftIt, `WindowHalfsAndThirds`, `MiroWindowsManager`, etc.). It supports non-standard layouts (`left40`, `right60`, `centerWithFullHeight`) that those Spoons don't, so swapping one in would be a regression. If you ever reconsider, that capability is the bar to clear.
