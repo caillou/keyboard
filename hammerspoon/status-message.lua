@@ -10,29 +10,29 @@ statusmessage.new = function(messageText)
 
     local styledTextAttributes = {
       font = { name = 'Monaco', size = 24 },
+      color = { white = 1.0 },
     }
 
     local styledText = styledtext.new('🔨 ' .. messageText, styledTextAttributes)
 
     local styledTextSize = drawing.getTextDrawingSize(styledText)
-    local textRect = {
-      x = frame.w - styledTextSize.w - 40,
-      y = frame.h - styledTextSize.h,
-      w = styledTextSize.w + 40,
-      h = styledTextSize.h + 40,
-    }
-    local text = drawing.text(textRect, styledText):setAlpha(0.7)
+    local padX, padY = 20, 8
+    local bgW = styledTextSize.w + padX * 2
+    local bgH = styledTextSize.h + padY * 2
+    local bgX = frame.x + (frame.w - bgW) / 2
+    local bgY = frame.y + (frame.h - bgH) / 2
 
-    local background = drawing.rectangle(
-      {
-        x = frame.w - styledTextSize.w - 45,
-        y = frame.h - styledTextSize.h - 3,
-        w = styledTextSize.w + 15,
-        h = styledTextSize.h + 6
-      }
-    )
+    local background = drawing.rectangle({ x = bgX, y = bgY, w = bgW, h = bgH })
     background:setRoundedRectRadii(10, 10)
-    background:setFillColor({ red = 0, green = 0, blue = 0, alpha=0.6 })
+    background:setFillColor({ red = 0, green = 0, blue = 0, alpha = 0.8 })
+
+    local textRect = {
+      x = bgX + padX,
+      y = bgY + padY,
+      w = styledTextSize.w,
+      h = styledTextSize.h,
+    }
+    local text = drawing.text(textRect, styledText)
 
     return background, text
   end
