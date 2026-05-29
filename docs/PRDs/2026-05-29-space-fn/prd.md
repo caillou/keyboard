@@ -275,3 +275,23 @@ The existing `hs.pathwatcher` in `init.lua` will reload Hammerspoon when the new
 ### On the deleted scratchpads
 
 Their contents survive in git history (`git log --follow hammerspoon/super-backup.lua` etc.). The keymap definitions and any inline comments worth quoting have been incorporated into this PRD and the new code. No reference value is lost by deleting the files from the tree.
+
+## Post-implementation notes
+
+### 2026-05-30: Re-entrancy guard mechanism
+
+The "Re-entrancy guard" section above describes a Lua-level `state.emittingSelf`
+flag set around `hs.eventtap.keyStroke` calls. The shipped implementation in
+`hammerspoon/space-fn.lua` instead tags synthetic events with
+`eventSourceUserData = SYNTHETIC_MARKER` (a constant defined in the adapter) and
+the tap callback short-circuits when it sees that property. Same goal, no
+flag-vs-async-post race window.
+
+### 2026-05-30: Buffer dedup in `pending`
+
+The "State machine" section above describes the `pending` row's `mapped
+key-down` transition as: "buffer it, suppress." The shipped engine in
+`hammerspoon/space-fn-engine.lua` makes this transition idempotent on key: if
+the key is already in the buffer, the new `key-down` is still suppressed but
+the buffer is not appended to. This absorbs macOS autorepeat events without
+duplicating emissions when the buffer commits.
