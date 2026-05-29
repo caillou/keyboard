@@ -225,3 +225,27 @@ LuaLS resolves poorly through symlinked source roots. This is handled by opening
 ### License facts
 
 The repo's LICENSE is already MIT (Copyright 2013 Jason Rudolph). EmmyLua.spoon is also MIT (its `init.lua` declares the license). MIT permits vendoring as long as the original copyright and permission notice are retained, which is satisfied by committing the Spoon files with their header intact.
+
+## Post-implementation notes
+
+### 2026-05-30: StyLua config landed as spaces-only defaults (not the 4-setting single-quote config)
+
+The "StyLua configuration" section above specifies a 4-setting `stylua.toml`
+(`column_width = 100`, `indent_type = "Spaces"`, `indent_width = 2`,
+`quote_style = "AutoPreferSingle"`). The shipped config (maintainer-approved)
+keeps only the two indentation settings and otherwise follows StyLua defaults:
+
+```toml
+indent_type = "Spaces"
+indent_width = 2
+```
+
+This means double quotes (StyLua default) rather than single, and a 120-column
+width (StyLua default) rather than 100 — the modern Lua/Neovim-ecosystem
+convention. The one-time baseline format pass therefore re-quoted existing
+strings, so it was not the near-no-op the section above anticipated; the diff
+was reviewed and committed deliberately. The vendored EmmyLua.spoon is excluded
+from formatting via a root `.styluaignore` (`hammerspoon/Spoons/`, plus
+`lua_modules/` defensively) so it stays byte-for-byte upstream-exact. The
+historical decision text above is left unchanged; this note is the current
+spec.

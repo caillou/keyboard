@@ -34,6 +34,15 @@ if [ ! -f "$TMP/EmmyLua.spoon/init.lua" ]; then
   exit 1
 fi
 
+# Content sanity check beyond mere presence: confirm init.lua actually looks
+# like the EmmyLua Spoon (it self-declares Spoon.name = "EmmyLua"), so a
+# silently-wrong fetch (HTML error page, redirected/renamed Spoon) is caught
+# rather than vendored. The commit SHAs recorded below add further provenance.
+if ! grep -q 'EmmyLua' "$TMP/EmmyLua.spoon/init.lua"; then
+  echo "Error: downloaded init.lua does not look like EmmyLua.spoon" >&2
+  exit 1
+fi
+
 # Record provenance (best-effort; falls back to "unknown" if the API is rate-limited).
 MASTER_SHA=$(curl -s "$API_MASTER" | grep '"sha"' | head -1 | sed -E 's/.*"sha": "([0-9a-f]+)".*/\1/')
 SOURCE_SHA=$(curl -s "$API_SOURCE" | grep '"sha"' | head -1 | sed -E 's/.*"sha": "([0-9a-f]+)".*/\1/')

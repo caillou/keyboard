@@ -35,7 +35,16 @@ ln -sfn $PWD/hammerspoon ~/.hammerspoon/keyboard
 # symlink makes the generated annotations land physically inside the repo (where
 # the editor reads them). Mirrors the keyboard symlink above; idempotent.
 mkdir -p ~/.hammerspoon/Spoons
-ln -sfn $PWD/hammerspoon/Spoons/EmmyLua.spoon ~/.hammerspoon/Spoons/EmmyLua.spoon
+EMMYLUA_LINK=~/.hammerspoon/Spoons/EmmyLua.spoon
+# `ln -sfn` on a path that is a REAL directory would create a nested symlink
+# INSIDE it (and the Spoon would silently fail to load), so only replace when
+# the target is a symlink or absent. Never rm -rf a real directory here.
+if [ -L "$EMMYLUA_LINK" ] || [ ! -e "$EMMYLUA_LINK" ]; then
+  ln -sfn $PWD/hammerspoon/Spoons/EmmyLua.spoon "$EMMYLUA_LINK"
+else
+  echo "⚠ $EMMYLUA_LINK is a real directory, not a symlink — leaving it untouched."
+  echo "  Remove it yourself and re-run if you want the vendored EmmyLua.spoon symlinked."
+fi
 
 # Prepare custom settings for navigating between words in iTerm2
 # grep -sq forward-word ~/.inputrc || cat $PWD/inputrc >> ~/.inputrc
