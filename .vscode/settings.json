@@ -1,0 +1,32 @@
+{
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua",
+    "editor.formatOnSave": true
+  },
+  "Lua.format.enable": false,
+  "Lua.diagnostics.globals": [
+    "hs",
+    "describe",
+    "it",
+    "before_each",
+    "after_each",
+    "setup",
+    "teardown",
+    "assert",
+    "spec",
+    "context",
+    "pending",
+    "randomize"
+  ],
+  "Lua.runtime.path": [
+    "?.lua",
+    "?/init.lua",
+    "hammerspoon/?.lua",
+    "hammerspoon/?/init.lua"
+  ],
+  "Lua.workspace.library": [
+    "${workspaceFolder}/hammerspoon",
+    "${workspaceFolder}/hammerspoon/Spoons/EmmyLua.spoon/annotations"
+  ],
+  "Lua.workspace.checkThirdParty": false
+}
