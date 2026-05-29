@@ -52,7 +52,9 @@ function M:advance(event, payload)
       local mods = copyMods(payload.mods)
       local remap = self.keymap[key]
       if remap ~= nil then
-        table.insert(self.buffer, { key = key, mods = mods, remap = remap })
+        if not isBuffered(self.buffer, key) then
+          table.insert(self.buffer, { key = key, mods = mods, remap = remap })
+        end
         return { { type = 'suppress' } }
       else
         local actions = {

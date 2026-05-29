@@ -139,6 +139,10 @@ end
 
 function M.setEnabled(bool)
   state.enabled = bool
+  if not bool then
+    if state.timer then state.timer:stop(); state.timer = nil end
+    engine = Engine.new({ keymap = KEYMAP })
+  end
 end
 
 return M

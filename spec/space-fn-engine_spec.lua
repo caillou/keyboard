@@ -170,6 +170,22 @@ describe('space-fn engine', function()
       local up = e:advance('space-up')
       assert.same({ { type = 'cancel-timer' }, { type = 'emit-space' } }, up)
     end)
+
+    it('autorepeat key-down during pending is absorbed, single key-up emits one remap', function()
+      local e = newEngine()
+      e:advance('space-down')
+      local d1 = e:advance('key-down', { key = 'j', mods = {} })
+      local d2 = e:advance('key-down', { key = 'j', mods = {} })
+      local d3 = e:advance('key-down', { key = 'j', mods = {} })
+      assert.same({ { type = 'suppress' } }, d1)
+      assert.same({ { type = 'suppress' } }, d2)
+      assert.same({ { type = 'suppress' } }, d3)
+      local up = e:advance('key-up', { key = 'j' })
+      assert.same({
+        { type = 'cancel-timer' },
+        { type = 'emit-remap', remap = 'left', physMods = {} },
+      }, up)
+    end)
   end)
 
   describe('modifier propagation', function()

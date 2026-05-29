@@ -20,8 +20,7 @@
 --   . => send window to the lower right quarter of the screen
 --   return => make window full screen
 --   n => send window to the next monitor
---   left => send window to the monitor on the left (if there is one)
---   right => send window to the monitor on the right (if there is one)
+--   left/down/up/right => same as j/k/i/l (one-handed window ops)
 --------------------------------------------------------------------------------
 
 return {
