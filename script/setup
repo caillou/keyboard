@@ -28,6 +28,10 @@ defaults write org.hammerspoon.Hammerspoon MJShowDockIconKey -bool FALSE
 # when opening Hammerspoon below
 killall Hammerspoon || true
 
+# Give LaunchServices a moment to clear the old process record — relaunching
+# too fast after killall can fail with `_LSOpenURLsWithCompletionHandler() -600`.
+sleep 1
+
 # Open Apps
 open /Applications/Hammerspoon.app
 
