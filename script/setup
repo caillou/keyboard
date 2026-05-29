@@ -10,6 +10,14 @@ brew bundle check || brew bundle
 # leaks into global package state. luarocks no-ops if already installed.
 luarocks --tree=lua_modules install busted
 
+# Install luacheck (Lua linter) into the same project-local tree.
+# luacheck's source reassigns generic-for loop variables, which Lua 5.5 rejects
+# (loop variables are const-by-default there), so it must run under Lua 5.4.
+# lua@5.4 (keg-only, no conflict with the default `lua`) is declared in the
+# Brewfile and installed by `brew bundle` above; we just build luacheck against
+# it here. luarocks no-ops if luacheck is already installed.
+luarocks --tree=lua_modules --lua-version=5.4 --lua-dir="$(brew --prefix lua@5.4)" install luacheck
+
 # Prepare custom settings for Hammerspoon
 mkdir -p ~/.hammerspoon
 

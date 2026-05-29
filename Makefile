@@ -1,4 +1,4 @@
-.PHONY: install test test-watch fmt fmt-check
+.PHONY: install test test-watch fmt fmt-check lint
 
 install:
 	./script/setup
@@ -14,3 +14,6 @@ fmt:
 
 fmt-check:
 	stylua --check .
+
+lint:
+	./lua_modules/bin/luacheck hammerspoon spec
