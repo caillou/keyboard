@@ -10,6 +10,18 @@
 -- to `hs` itself is still caught.
 read_globals = { 'hs' }
 
+-- Deliberate top-level globals (see CLAUDE.md). They MUST be globals, not
+-- locals: the pathwatchers would otherwise be garbage-collected and stop
+-- firing, and keyUpDown / enableHotkeyForWindowsMatchingFilter are intended as
+-- module-level helpers callable from other files. Declared here so luacheck
+-- treats them as known writable globals instead of flagging the assignment.
+globals = {
+  'configWatcher',
+  'keyboardWatcher',
+  'keyUpDown',
+  'enableHotkeyForWindowsMatchingFilter',
+}
+
 -- Let StyLua own line length and spacing.
 max_line_length = false
 
@@ -36,6 +48,16 @@ ignore = {
   '614',
   '621',
   '631',
+}
+
+-- windows.lua deliberately attaches custom layout functions onto hs.window
+-- itself (e.g. hs.window.left, hs.window.upRight) — a documented pattern in
+-- CLAUDE.md so the modal can look them up dynamically off the window object.
+-- Mark hs.window as a writable field here so those assignments aren't flagged
+-- as "setting read-only field of global hs". The default read-only `hs` still
+-- applies everywhere else.
+files['hammerspoon/windows.lua'] = {
+  globals = { 'hs.window' },
 }
 
 -- Test files use busted's globals (describe, it, assert, setup, teardown, ...).

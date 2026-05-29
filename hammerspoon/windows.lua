@@ -1,4 +1,3 @@
-local log = hs.logger.new("init.lua", "debug")
 hs.window.animationDuration = 0
 
 -- +-----------------+
@@ -192,8 +191,8 @@ end
 function hs.window.nextScreen(win)
   local currentScreen = win:screen()
   local allScreens = hs.screen.allScreens()
-  currentScreenIndex = hs.fnutils.indexOf(allScreens, currentScreen)
-  nextScreenIndex = currentScreenIndex + 1
+  local currentScreenIndex = hs.fnutils.indexOf(allScreens, currentScreen)
+  local nextScreenIndex = currentScreenIndex + 1
 
   if allScreens[nextScreenIndex] then
     win:moveToScreen(allScreens[nextScreenIndex])
@@ -202,7 +201,7 @@ function hs.window.nextScreen(win)
   end
 end
 
-windowLayoutMode = hs.hotkey.modal.new({}, "F16")
+local windowLayoutMode = hs.hotkey.modal.new({}, "F16")
 
 windowLayoutMode.entered = function()
   windowLayoutMode.statusMessage:show()
@@ -232,11 +231,11 @@ local showHelp = windowMappings.showHelp
 local trigger = windowMappings.trigger
 local mappings = windowMappings.mappings
 
-function getModifiersStr(modifiers)
+local function getModifiersStr(mods)
   local modMap = { shift = "⇧", ctrl = "⌃", alt = "⌥", cmd = "⌘" }
   local retVal = ""
 
-  for i, v in ipairs(modifiers) do
+  for _, v in ipairs(mods) do
     retVal = retVal .. modMap[v]
   end
 
@@ -246,19 +245,19 @@ end
 local msgStr = getModifiersStr(modifiers)
 msgStr = "Window Layout Mode (" .. msgStr .. (string.len(msgStr) > 0 and "+" or "") .. trigger .. ")"
 
-for i, mapping in ipairs(mappings) do
-  local modifiers, trigger, winFunction = table.unpack(mapping)
-  local hotKeyStr = getModifiersStr(modifiers)
+for _, mapping in ipairs(mappings) do
+  local mapModifiers, mapTrigger, winFunction = table.unpack(mapping)
+  local hotKeyStr = getModifiersStr(mapModifiers)
 
   if showHelp == true then
     if string.len(hotKeyStr) > 0 then
-      msgStr = msgStr .. (string.format("\n%10s+%s => %s", hotKeyStr, trigger, winFunction))
+      msgStr = msgStr .. (string.format("\n%10s+%s => %s", hotKeyStr, mapTrigger, winFunction))
     else
-      msgStr = msgStr .. (string.format("\n%11s => %s", trigger, winFunction))
+      msgStr = msgStr .. (string.format("\n%11s => %s", mapTrigger, winFunction))
     end
   end
 
-  windowLayoutMode:bindWithAutomaticExit(modifiers, trigger, function()
+  windowLayoutMode:bindWithAutomaticExit(mapModifiers, mapTrigger, function()
     local fw = hs.window.focusedWindow()
     if fw[winFunction] then
       fw[winFunction](fw)

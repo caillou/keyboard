@@ -87,9 +87,8 @@ executeActions = function(actions)
       end
     elseif t == "passthrough" then
       sawPassthrough = true
-    elseif t == "suppress" then
-      -- default; nothing to do
     end
+    -- a "suppress" action is the default (suppress stays true): no-op here.
   end
   if sawPassthrough then
     suppress = false

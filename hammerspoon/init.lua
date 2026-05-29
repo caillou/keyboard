@@ -1,5 +1,3 @@
-local log = hs.logger.new("init.lua", "debug")
-
 -- Install the `hs` CLI tool into ~/.local — XDG path, no sudo needed. See CLAUDE.md.
 require("hs.ipc")
 hs.ipc.cliInstall(os.getenv("HOME") .. "/.local")
