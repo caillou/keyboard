@@ -55,6 +55,7 @@ enableHotkeyForWindowsMatchingFilter = function(windowFilter, hotkey)
 end
 
 require('keyboard.windows')
+require('keyboard.space-fn').start()
 
 hs.notify.new({
   title='Hammerspoon',
