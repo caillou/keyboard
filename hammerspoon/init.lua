@@ -10,15 +10,23 @@ hs.hotkey.bind({'shift','ctrl'}, '`', nil, function()
   hs.reload()
 end)
 
--- Auto-reload when any .lua file under ~/.hammerspoon/ (incl. the keyboard/ symlink) changes.
-configWatcher = hs.pathwatcher.new(hs.configdir, function(files)
+-- Auto-reload when any .lua file changes. FSEvents doesn't follow symlinks,
+-- so we watch both ~/.hammerspoon/ and the resolved target of the keyboard/ symlink.
+local function reloadOnLua(files)
   for _, file in ipairs(files) do
     if file:sub(-4) == '.lua' then
       hs.reload()
       return
     end
   end
-end):start()
+end
+
+configWatcher = hs.pathwatcher.new(hs.configdir, reloadOnLua):start()
+
+local keyboardDir = hs.fs.pathToAbsolute(hs.configdir .. '/keyboard')
+if keyboardDir and keyboardDir ~= hs.configdir .. '/keyboard' then
+  keyboardWatcher = hs.pathwatcher.new(keyboardDir, reloadOnLua):start()
+end
 
 keyUpDown = function(modifiers, key)
   -- Un-comment & reload config to log each keystroke that we're triggering
