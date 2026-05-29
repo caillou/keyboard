@@ -25,7 +25,6 @@
     "hammerspoon/?/init.lua"
   ],
   "Lua.workspace.library": [
-    "${workspaceFolder}/hammerspoon",
     "${workspaceFolder}/hammerspoon/Spoons/EmmyLua.spoon/annotations"
   ],
   "Lua.workspace.checkThirdParty": false

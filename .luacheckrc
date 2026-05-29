@@ -13,6 +13,14 @@ read_globals = { 'hs' }
 -- Let StyLua own line length and spacing.
 max_line_length = false
 
+-- Never lint vendored/installed code, mirroring `.styluaignore`. The EmmyLua
+-- Spoon under hammerspoon/Spoons/ is vendored upstream code we don't own, and
+-- lua_modules/ is the LuaRocks install tree (busted, luacheck themselves).
+exclude_files = {
+  'hammerspoon/Spoons/',
+  'lua_modules/',
+}
+
 -- Silence luacheck's whitespace/formatting diagnostics so it never contradicts
 -- StyLua. These are the W6xx ("formatting") family:
 --   611 line contains only whitespace
