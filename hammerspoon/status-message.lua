@@ -1,7 +1,7 @@
-local drawing = require 'hs.drawing'
-local geometry = require 'hs.geometry'
-local screen = require 'hs.screen'
-local styledtext = require 'hs.styledtext'
+local drawing = require("hs.drawing")
+local geometry = require("hs.geometry")
+local screen = require("hs.screen")
+local styledtext = require("hs.styledtext")
 
 local statusmessage = {}
 statusmessage.new = function(messageText)
@@ -9,11 +9,11 @@ statusmessage.new = function(messageText)
     local frame = screen.primaryScreen():frame()
 
     local styledTextAttributes = {
-      font = { name = 'Monaco', size = 24 },
+      font = { name = "Monaco", size = 24 },
       color = { white = 1.0 },
     }
 
-    local styledText = styledtext.new('🔨 ' .. messageText, styledTextAttributes)
+    local styledText = styledtext.new("🔨 " .. messageText, styledTextAttributes)
 
     local styledTextSize = drawing.getTextDrawingSize(styledText)
     local padX, padY = 20, 8
@@ -59,8 +59,12 @@ statusmessage.new = function(messageText)
     notify = function(self, seconds)
       local seconds = seconds or 1
       self:show()
-      hs.timer.delayed.new(seconds, function() self:hide() end):start()
-    end
+      hs.timer.delayed
+        .new(seconds, function()
+          self:hide()
+        end)
+        :start()
+    end,
   }
 end
 

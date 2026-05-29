@@ -1,17 +1,17 @@
-local log = hs.logger.new('init.lua', 'debug')
+local log = hs.logger.new("init.lua", "debug")
 
 -- Install the `hs` CLI tool into ~/.local — XDG path, no sudo needed. See CLAUDE.md.
-require('hs.ipc')
-hs.ipc.cliInstall(os.getenv('HOME') .. '/.local')
+require("hs.ipc")
+hs.ipc.cliInstall(os.getenv("HOME") .. "/.local")
 
 -- Generate EmmyLua annotation stubs for hs.* editor autocomplete (dev tooling).
 -- The generator runs as a side effect of the Spoon's :init(); a missing Spoon
 -- is a no-op. Loaded before the pathwatchers below so its generated files don't
 -- race the reload watcher. See CLAUDE.md "Editor and tooling".
-pcall(hs.loadSpoon, 'EmmyLua')
+pcall(hs.loadSpoon, "EmmyLua")
 
 -- Use Shift+Control+` to reload Hammerspoon config
-hs.hotkey.bind({'shift','ctrl'}, '`', nil, function()
+hs.hotkey.bind({ "shift", "ctrl" }, "`", nil, function()
   hs.reload()
 end)
 
@@ -21,7 +21,7 @@ end)
 -- are ignored so stub generation never triggers a reload.
 local function reloadOnLua(files)
   for _, file in ipairs(files) do
-    if file:sub(-4) == '.lua' and not file:find('EmmyLua%.spoon/annotations/') then
+    if file:sub(-4) == ".lua" and not file:find("EmmyLua%.spoon/annotations/") then
       hs.reload()
       return
     end
@@ -31,8 +31,8 @@ end
 -- global on purpose: local would be GC'd and stop the watcher
 configWatcher = hs.pathwatcher.new(hs.configdir, reloadOnLua):start()
 
-local keyboardDir = hs.fs.pathToAbsolute(hs.configdir .. '/keyboard')
-if keyboardDir and keyboardDir ~= hs.configdir .. '/keyboard' then
+local keyboardDir = hs.fs.pathToAbsolute(hs.configdir .. "/keyboard")
+if keyboardDir and keyboardDir ~= hs.configdir .. "/keyboard" then
   keyboardWatcher = hs.pathwatcher.new(keyboardDir, reloadOnLua):start()
 end
 
@@ -62,10 +62,12 @@ enableHotkeyForWindowsMatchingFilter = function(windowFilter, hotkey)
   end)
 end
 
-require('keyboard.windows')
-require('keyboard.space-fn').start()
+require("keyboard.windows")
+require("keyboard.space-fn").start()
 
-hs.notify.new({
-  title='Hammerspoon',
-  informativeText='Ready to rock 🤘'
-}):send()
+hs.notify
+  .new({
+    title = "Hammerspoon",
+    informativeText = "Ready to rock 🤘",
+  })
+  :send()
