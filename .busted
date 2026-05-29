@@ -1,0 +1,13 @@
+-- Busted config.
+--
+-- Symlink convention: script/setup symlinks ./hammerspoon to
+-- ~/.hammerspoon/keyboard, so at Hammerspoon runtime files are addressed as
+-- `keyboard.foo`. Standalone `lua` (which busted runs under) has no such
+-- symlink, so for tests we put ./hammerspoon on package.path directly and
+-- specs require the engine as `require('space-fn-engine')` (no `keyboard.`
+-- prefix).
+return {
+  default = {
+    lpath = "./hammerspoon/?.lua;;",
+  },
+}

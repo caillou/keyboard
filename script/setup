@@ -6,6 +6,10 @@ which -s brew || (echo "Homebrew is required: http://brew.sh/" && exit 1)
 
 brew bundle check || brew bundle
 
+# Install busted (Lua test framework) into a project-local tree so nothing
+# leaks into global package state. luarocks no-ops if already installed.
+luarocks --tree=lua_modules install busted
+
 # Prepare custom settings for Hammerspoon
 mkdir -p ~/.hammerspoon
 
