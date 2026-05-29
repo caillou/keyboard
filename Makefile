@@ -1,4 +1,4 @@
-.PHONY: install test test-watch fmt fmt-check lint
+.PHONY: install test test-watch fmt fmt-check lint update-emmylua
 
 install:
 	./script/setup
@@ -17,3 +17,6 @@ fmt-check:
 
 lint:
 	./lua_modules/bin/luacheck hammerspoon spec
+
+update-emmylua:
+	./script/update-emmylua

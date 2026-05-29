@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# Re-vendor the latest upstream EmmyLua.spoon into the repo.
+#
+# EmmyLua.spoon is a build-time generator that produces hs.* EmmyLua annotation
+# stubs for editor autocomplete. It is vendored (committed) so every machine
+# runs identical generator code and setup stays offline-safe. This script
+# refreshes that vendored copy on demand; run it deliberately, not at setup.
+#
+# Source of truth: the official Hammerspoon Spoons distributable zip.
+
+set -e
+
+ZIP_URL="https://github.com/Hammerspoon/Spoons/raw/master/Spoons/EmmyLua.spoon.zip"
+SOURCE_TREE_URL="https://github.com/Hammerspoon/Spoons/tree/master/Source/EmmyLua.spoon"
+REPO_URL="https://github.com/Hammerspoon/Spoons"
+API_MASTER="https://api.github.com/repos/Hammerspoon/Spoons/commits/master"
+API_SOURCE="https://api.github.com/repos/Hammerspoon/Spoons/commits?path=Source/EmmyLua.spoon&per_page=1"
+
+# Resolve the repo root from this script's location so it runs standalone.
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+REPO_ROOT=$(dirname "$SCRIPT_DIR")
+TARGET="$REPO_ROOT/hammerspoon/Spoons/EmmyLua.spoon"
+
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
+
+echo "Fetching $ZIP_URL ..."
+curl -sL -o "$TMP/EmmyLua.spoon.zip" "$ZIP_URL"
+unzip -oq "$TMP/EmmyLua.spoon.zip" -d "$TMP"
+
+if [ ! -f "$TMP/EmmyLua.spoon/init.lua" ]; then
+  echo "Error: downloaded archive does not contain EmmyLua.spoon/init.lua" >&2
+  exit 1
+fi
+
+# Record provenance (best-effort; falls back to "unknown" if the API is rate-limited).
+MASTER_SHA=$(curl -s "$API_MASTER" | grep '"sha"' | head -1 | sed -E 's/.*"sha": "([0-9a-f]+)".*/\1/')
+SOURCE_SHA=$(curl -s "$API_SOURCE" | grep '"sha"' | head -1 | sed -E 's/.*"sha": "([0-9a-f]+)".*/\1/')
+TODAY=$(date +%Y-%m-%d)
+MASTER_SHA=${MASTER_SHA:-unknown}
+SOURCE_SHA=${SOURCE_SHA:-unknown}
+
+# Replace the vendored source in place. Keep annotations/ (gitignored) untouched.
+cp "$TMP/EmmyLua.spoon/init.lua" "$TARGET/init.lua"
+[ -f "$TMP/EmmyLua.spoon/docs.json" ] && cp "$TMP/EmmyLua.spoon/docs.json" "$TARGET/docs.json"
+
+cat > "$TARGET/UPSTREAM.md" <<EOF
+# EmmyLua.spoon — vendoring provenance
+
+This is a vendored, unmodified copy of EmmyLua.spoon from the official
+Hammerspoon Spoons repository. It is a build-time code generator: when
+Hammerspoon loads it, it introspects the installed \`hs\` API and writes EmmyLua
+annotation stubs under \`annotations/\` (gitignored), which LuaLS reads for
+\`hs.*\` autocomplete.
+
+The source files (\`init.lua\`, \`docs.json\`) are kept unmodified. Refresh with
+\`make update-emmylua\` (see \`script/update-emmylua\`).
+
+## Source
+
+- Distributable zip: $ZIP_URL
+- Source tree: $SOURCE_TREE_URL
+- Upstream repo: $REPO_URL
+- License: MIT (retained in \`init.lua\`)
+
+## Retrieved
+
+- Date: $TODAY
+- Hammerspoon/Spoons master commit: $MASTER_SHA
+- Last commit touching the EmmyLua source: $SOURCE_SHA
+EOF
+
+echo "Vendored EmmyLua.spoon -> $TARGET"
+echo "  master commit: $MASTER_SHA"
+echo "  source commit: $SOURCE_SHA"
+echo "Review 'git status' / 'git diff' before committing."

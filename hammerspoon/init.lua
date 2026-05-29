@@ -4,6 +4,12 @@ local log = hs.logger.new('init.lua', 'debug')
 require('hs.ipc')
 hs.ipc.cliInstall(os.getenv('HOME') .. '/.local')
 
+-- Generate EmmyLua annotation stubs for hs.* editor autocomplete (dev tooling).
+-- The generator runs as a side effect of the Spoon's :init(); a missing Spoon
+-- is a no-op. Loaded before the pathwatchers below so its generated files don't
+-- race the reload watcher. See CLAUDE.md "Editor and tooling".
+pcall(hs.loadSpoon, 'EmmyLua')
+
 -- Use Shift+Control+` to reload Hammerspoon config
 hs.hotkey.bind({'shift','ctrl'}, '`', nil, function()
   hs.reload()
@@ -11,9 +17,11 @@ end)
 
 -- Auto-reload when any .lua file changes. FSEvents doesn't follow symlinks,
 -- so we watch both ~/.hammerspoon/ and the resolved target of the keyboard/ symlink.
+-- Generated EmmyLua annotation files (under an EmmyLua.spoon/annotations/ dir)
+-- are ignored so stub generation never triggers a reload.
 local function reloadOnLua(files)
   for _, file in ipairs(files) do
-    if file:sub(-4) == '.lua' then
+    if file:sub(-4) == '.lua' and not file:find('EmmyLua%.spoon/annotations/') then
       hs.reload()
       return
     end

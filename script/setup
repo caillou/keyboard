@@ -30,6 +30,13 @@ fi
 
 ln -sfn $PWD/hammerspoon ~/.hammerspoon/keyboard
 
+# Symlink the vendored EmmyLua.spoon so Hammerspoon loads it from ~/.hammerspoon/Spoons.
+# The generator hardcodes its output to the Spoon's own resourcePath, so this
+# symlink makes the generated annotations land physically inside the repo (where
+# the editor reads them). Mirrors the keyboard symlink above; idempotent.
+mkdir -p ~/.hammerspoon/Spoons
+ln -sfn $PWD/hammerspoon/Spoons/EmmyLua.spoon ~/.hammerspoon/Spoons/EmmyLua.spoon
+
 # Prepare custom settings for navigating between words in iTerm2
 # grep -sq forward-word ~/.inputrc || cat $PWD/inputrc >> ~/.inputrc
 
