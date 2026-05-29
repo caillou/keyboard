@@ -206,9 +206,11 @@ windowLayoutMode = hs.hotkey.modal.new({}, 'F16')
 
 windowLayoutMode.entered = function()
   windowLayoutMode.statusMessage:show()
+  require('keyboard.space-fn').setEnabled(false)
 end
 windowLayoutMode.exited = function()
   windowLayoutMode.statusMessage:hide()
+  require('keyboard.space-fn').setEnabled(true)
 end
 
 -- Bind the given key to call the given function and exit WindowLayout mode
