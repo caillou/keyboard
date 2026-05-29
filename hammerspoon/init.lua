@@ -1,6 +1,6 @@
 local log = hs.logger.new('init.lua', 'debug')
 
--- Use Control+` to reload Hammerspoon config
+-- Use Shift+Control+` to reload Hammerspoon config
 hs.hotkey.bind({'shift','ctrl'}, '`', nil, function()
   hs.reload()
 end)
@@ -31,16 +31,9 @@ enableHotkeyForWindowsMatchingFilter = function(windowFilter, hotkey)
   end)
 end
 
-require('keyboard.control-escape')
--- require('keyboard.delete-words')
--- require('keyboard.markdown')
--- require('keyboard.microphone')
--- require('keyboard.panes')
-require('keyboard.super-backup')
 require('keyboard.windows')
--- require('keyboard.scroll-with-trackpoint')
 
 hs.notify.new({
   title='Hammerspoon',
-  informativeText='Ready to  rock 🤘'
+  informativeText='Ready to rock 🤘'
 }):send()

@@ -1,2 +1,2 @@
-cask 'karabiner-elements'
+# cask 'karabiner-elements'
 cask 'hammerspoon'
