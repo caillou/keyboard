@@ -1,9 +1,24 @@
 local log = hs.logger.new('init.lua', 'debug')
 
+-- Enable the `hs` CLI tool so config can be reloaded / inspected from a terminal.
+-- cliInstall() is a no-op if already installed; first install prompts for admin auth.
+require('hs.ipc')
+hs.ipc.cliInstall()
+
 -- Use Shift+Control+` to reload Hammerspoon config
 hs.hotkey.bind({'shift','ctrl'}, '`', nil, function()
   hs.reload()
 end)
+
+-- Auto-reload when any .lua file under ~/.hammerspoon/ (incl. the keyboard/ symlink) changes.
+configWatcher = hs.pathwatcher.new(hs.configdir, function(files)
+  for _, file in ipairs(files) do
+    if file:sub(-4) == '.lua' then
+      hs.reload()
+      return
+    end
+  end
+end):start()
 
 keyUpDown = function(modifiers, key)
   -- Un-comment & reload config to log each keystroke that we're triggering
