@@ -8,6 +8,10 @@ brew bundle check || brew bundle
 
 # Prepare custom settings for Hammerspoon
 mkdir -p ~/.hammerspoon
+
+# Pre-create the install target for the `hs` CLI tool (hs.ipc.cliInstall in
+# init.lua symlinks into ~/.local/bin and ~/.local/share/man/man1).
+mkdir -p ~/.local/bin ~/.local/share/man/man1
 if ! grep -sq "require('keyboard')" ~/.hammerspoon/init.lua; then
   echo "require('keyboard') -- Load Hammerspoon bits from https://github.com/jasonrudolph/keyboard" >> ~/.hammerspoon/init.lua
 fi
@@ -30,5 +34,16 @@ open /Applications/Hammerspoon.app
 # Enable apps at startup
 osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:true}' > /dev/null
 # osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Karabiner-Elements.app", hidden:true}' > /dev/null
+
+# Give Hammerspoon a moment to boot and run cliInstall in init.lua, then verify
+# the `hs` CLI is callable. ~/.local/bin must be on PATH; otherwise suggest the
+# one-liner to add it (assumes fish; persistent universal variable).
+sleep 2
+if PATH="$HOME/.local/bin:$PATH" hs -c "1+1" >/dev/null 2>&1; then
+  echo "✓ hs CLI is callable"
+else
+  echo "⚠ hs CLI not callable. If ~/.local/bin/hs exists, ~/.local/bin is not on your PATH."
+  echo "  In fish, run: fish_add_path ~/.local/bin"
+fi
 
 echo "Done! Remember to enable Accessibility for Hammerspoon."

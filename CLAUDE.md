@@ -10,7 +10,7 @@ A personal macOS keyboard customization built on Hammerspoon. All logic is Lua l
 
 - `script/setup` — installs dependencies via `brew bundle`, symlinks `hammerspoon/` into `~/.hammerspoon/keyboard`, appends `require('keyboard')` to `~/.hammerspoon/init.lua`, hides the Hammerspoon dock icon, and (re)launches Hammerspoon. Idempotent; safe to re-run after pulling.
 - A `hs.pathwatcher` in `init.lua` auto-reloads on any `.lua` change under `~/.hammerspoon/`. **Shift+Ctrl+`** is still bound as a manual fallback.
-- `hs.ipc` is loaded and the `hs` CLI is installed at startup, so config can be reloaded or inspected from a terminal: `hs -c "hs.reload()"`, `hs -c "hs.window.focusedWindow():title()"`, etc.
+- `hs.ipc` is loaded and the `hs` CLI is symlinked into `~/.local/bin` at startup, so config can be reloaded or inspected from a terminal: `hs -c "hs.reload()"`, `hs -c "hs.window.focusedWindow():title()"`, etc. `script/setup` pre-creates `~/.local/bin` and `~/.local/share/man/man1` (cliInstall won't create them itself) and verifies the CLI works at the end of setup. If `~/.local/bin` isn't on `PATH`, the setup script prints `fish_add_path ~/.local/bin` as the one-liner fix (persistent fish universal variable). Also note: cliInstall refuses to repair a half-installed state — if `hs -c "hs.ipc.cliStatus(os.getenv('HOME') .. '/.local')"` returns `false` even though `hs -c "1+1"` works, run `hs.ipc.cliUninstall(...)` then reload.
 - Debug from the Hammerspoon Console (menu bar → Hammerspoon → Console). `hs.logger.new(...)` output appears there.
 
 ## Architecture

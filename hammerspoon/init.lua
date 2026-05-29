@@ -1,9 +1,8 @@
 local log = hs.logger.new('init.lua', 'debug')
 
--- Enable the `hs` CLI tool so config can be reloaded / inspected from a terminal.
--- cliInstall() is a no-op if already installed; first install prompts for admin auth.
+-- Install the `hs` CLI tool into ~/.local — XDG path, no sudo needed. See CLAUDE.md.
 require('hs.ipc')
-hs.ipc.cliInstall()
+hs.ipc.cliInstall(os.getenv('HOME') .. '/.local')
 
 -- Use Shift+Control+` to reload Hammerspoon config
 hs.hotkey.bind({'shift','ctrl'}, '`', nil, function()
@@ -21,6 +20,7 @@ local function reloadOnLua(files)
   end
 end
 
+-- global on purpose: local would be GC'd and stop the watcher
 configWatcher = hs.pathwatcher.new(hs.configdir, reloadOnLua):start()
 
 local keyboardDir = hs.fs.pathToAbsolute(hs.configdir .. '/keyboard')
