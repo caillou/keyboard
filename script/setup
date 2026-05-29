@@ -31,9 +31,9 @@ killall Hammerspoon || true
 # Open Apps
 open /Applications/Hammerspoon.app
 
-# Enable apps at startup
-osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:true}' > /dev/null
-# osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Karabiner-Elements.app", hidden:true}' > /dev/null
+# Enable apps at startup (guard against duplicate login items on re-runs)
+osascript -e 'tell application "System Events" to if not (exists login item "Hammerspoon") then make login item at end with properties {path:"/Applications/Hammerspoon.app", hidden:true}' > /dev/null
+# osascript -e 'tell application "System Events" to if not (exists login item "Karabiner-Elements") then make login item at end with properties {path:"/Applications/Karabiner-Elements.app", hidden:true}' > /dev/null
 
 # Give Hammerspoon a moment to boot and run cliInstall in init.lua, then verify
 # the `hs` CLI is callable. ~/.local/bin must be on PATH; otherwise suggest the
