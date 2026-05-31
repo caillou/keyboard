@@ -55,15 +55,6 @@ statusmessage.new = function(messageText)
         self.text = nil
       end
     end,
-    notify = function(self, seconds)
-      seconds = seconds or 1
-      self:show()
-      hs.timer.delayed
-        .new(seconds, function()
-          self:hide()
-        end)
-        :start()
-    end,
   }
 end
 

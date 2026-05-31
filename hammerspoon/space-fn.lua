@@ -18,7 +18,6 @@ local SYNTHETIC_MARKER = 0xC1AC1ED
 local log = hs.logger.new("space-fn", "info")
 
 local M = {}
-M.log = log
 
 local state = {
   enabled = true,
@@ -139,17 +138,6 @@ function M.start()
   end
   state.tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown, hs.eventtap.event.types.keyUp }, onEvent)
   state.tap:start()
-end
-
-function M.stop()
-  if state.tap then
-    state.tap:stop()
-    state.tap = nil
-  end
-  if state.timer then
-    state.timer:stop()
-    state.timer = nil
-  end
 end
 
 function M.setEnabled(bool)

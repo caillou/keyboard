@@ -11,15 +11,12 @@
 read_globals = { 'hs' }
 
 -- Deliberate top-level globals (defined in hammerspoon/init.lua). They MUST be
--- globals, not locals: the pathwatchers would otherwise be garbage-collected and stop
--- firing, and keyUpDown / enableHotkeyForWindowsMatchingFilter are intended as
--- module-level helpers callable from other files. Declared here so luacheck
--- treats them as known writable globals instead of flagging the assignment.
+-- globals, not locals: the pathwatchers would otherwise be garbage-collected and
+-- stop firing. Declared here so luacheck treats them as known writable globals
+-- instead of flagging the assignment.
 globals = {
   'configWatcher',
   'keyboardWatcher',
-  'keyUpDown',
-  'enableHotkeyForWindowsMatchingFilter',
 }
 
 -- Let StyLua own line length and spacing.
