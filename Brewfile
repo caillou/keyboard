@@ -1,5 +1,6 @@
 # cask 'karabiner-elements'
 cask 'hammerspoon'
+brew 'lefthook'
 brew 'lua'
 brew 'lua@5.4'
 brew 'luarocks'

@@ -1,0 +1,12 @@
+# Pre-commit enforcement (ADR 0002): the commit boundary is the gate, not CI.
+# Runs the whole check suite — no staged-file filtering — because the suite is
+# sub-two-seconds on this repo. `git commit --no-verify` bypasses (lefthook default).
+pre-commit:
+  parallel: true
+  commands:
+    fmt-check:
+      run: make fmt-check
+    lint:
+      run: make lint
+    test:
+      run: make test
