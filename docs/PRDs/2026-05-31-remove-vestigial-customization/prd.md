@@ -79,6 +79,9 @@ identically. This is a clarity and maintenance change, not a feature change.
 15. As a maintainer, I want a single live verification step documented, so that I
     can confirm the one behavior the test suite structurally cannot cover (the
     window-key dispatch resolving through `hs.window`).
+16. As a developer, I want the window-layout functions defined as locals rather
+    than injected onto `hs.window`, so that the LSP is warning-free and the
+    dispatch is a single uniform call with no namespace pollution.
 
 ## Implementation Decisions
 
@@ -257,3 +260,63 @@ only be settled by live Hammerspoon verification. That risk materialized: live
 verification failed for the collapsed form, and the change was reverted.
 
 All other decisions in this PRD shipped as written and are behavior-preserving.
+
+## Follow-up: localize layout functions (resolves the dispatch errata)
+
+A deeper review — triggered by a LuaLS `inject-field` diagnostic — found that the
+Errata above treated a symptom, not the cause. The two-branch dispatch is not an
+irreducible fact of the design; it is forced by an upstream choice the Errata took
+as given: the ~12 window-layout functions are **monkey-patched onto the
+`hs.window` module table** (`function hs.window.left(win) ... end`, …). That one
+choice produces three distinct symptoms:
+
+1. LuaLS emits an `inject-field` warning on every such definition ("Fields cannot
+   be injected into the reference of `hs.window` … use `---@class`").
+2. The dispatch asymmetry the Errata documented: custom fns live on the
+   `hs.window` **module** table; native methods like `maximize` live on the window
+   object's **metatable**. No single-table lookup resolves both — hence the
+   restored two branches.
+3. String-keyed dispatch (mappings store `"down"` etc. as strings) forces a
+   runtime table lookup that then has to guess which table holds the function.
+
+**Decision — localize the layout functions and fix the data model first.** Define
+the layout functions as plain `local function`s (geometry bodies verbatim), have
+the `mappings` array hold **direct function references** instead of name strings,
+wrap native `maximize` uniformly as `function(w) w:maximize() end`, and reduce the
+dispatch to a single branch-free call:
+
+```lua
+mapping.fn(hs.window.focusedWindow())
+```
+
+This removes the monkey-patch (all ~12 LuaLS warnings vanish), the two-branch
+dispatch, the string lookup, and the `hs.window` namespace pollution in one move.
+
+This **revives the intent of User Story 4** — a single-expression dispatch — by
+fixing the data model rather than rewriting the dispatch line in isolation. The
+PRD was right about the goal and wrong about the mechanism: collapsing the
+dispatch is only safe once the functions no longer straddle two tables. US4 is
+therefore **no longer "withdrawn" but "achieved via refactor."**
+
+Companion cleanups in scope:
+
+- **`.luacheckrc`:** the carve-out `files['hammerspoon/windows.lua'] = { globals =
+  { 'hs.window' } }` existed to allow the monkey-patches. After localizing, that
+  purpose is gone, but the legitimate real-API write `hs.window.animationDuration
+  = 0` at the top of `windows.lua` still needs an allowance. Retarget the carve-out
+  and its comment to cover only that write — do **not** blanket-delete it.
+- **Stale header comment:** the `windows.lua` header claims a "LuaLS carve-out" in
+  `.vscode/settings.json` that does not exist. Correct or remove that claim.
+- **Preserve all real `hs.window` API usage verbatim** (`animationDuration`,
+  `focusedWindow`, native methods).
+
+Behavior parity is required (all 17 keys → identical geometry) and the dispatch
+change is again gated on live Hammerspoon verification, since it is the one
+behavior the spec suite structurally cannot cover.
+
+Blast-radius analysis found **zero** external callers of the custom layout fns —
+every reference lives inside `windows.lua`. (The only theoretical residual risk is
+the user's own ad-hoc `~/.hammerspoon` scripts outside this repo.)
+
+Tracked as a new issue file:
+`issues/02. localize window layout functions and collapse dispatch.md`.
