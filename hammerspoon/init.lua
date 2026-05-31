@@ -40,11 +40,10 @@ if keyboardDir and keyboardDir ~= hs.configdir .. "/keyboard" then
 end
 
 require("keyboard.windows")
+
 require("keyboard.space-fn").start()
 
-hs.notify
-  .new({
-    title = "Hammerspoon",
-    informativeText = "Ready to rock 🤘",
-  })
-  :send()
+-- hs.alert draws its own on-screen overlay rather than going through macOS
+-- Notification Center, which silently drops notifications sent during config
+-- load. (hs.notify delivers fine for standalone sends, just not at load time.)
+hs.alert.show("Ready to rock 🤘")
