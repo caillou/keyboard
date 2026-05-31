@@ -236,16 +236,27 @@ function windowLayoutMode.bindWithAutomaticExit(mode, modifiers, key, fn)
   end)
 end
 
-local status, windowMappings = pcall(require, "keyboard.windows-bindings")
-
-if not status then
-  windowMappings = require("keyboard.windows-bindings-defaults")
-end
-
-local modifiers = windowMappings.modifiers
-local showHelp = windowMappings.showHelp
-local trigger = windowMappings.trigger
-local mappings = windowMappings.mappings
+local modifiers = { "ctrl" }
+local trigger = "s"
+local mappings = {
+  { {}, "return", "maximize" },
+  { {}, "space", "centerWithFullHeight" },
+  { {}, "j", "left" },
+  { {}, "k", "down" },
+  { {}, "i", "up" },
+  { {}, "l", "right" },
+  { {}, "left", "left" },
+  { {}, "down", "down" },
+  { {}, "up", "up" },
+  { {}, "right", "right" },
+  { { "shift" }, "j", "left40" },
+  { { "shift" }, "l", "right60" },
+  { {}, "u", "upLeft" },
+  { {}, "o", "upRight" },
+  { {}, "m", "downLeft" },
+  { {}, ".", "downRight" },
+  { {}, "n", "nextScreen" },
+}
 
 local function getModifiersStr(mods)
   local modMap = { shift = "⇧", ctrl = "⌃", alt = "⌥", cmd = "⌘" }
@@ -263,23 +274,9 @@ msgStr = "Window Layout Mode (" .. msgStr .. (string.len(msgStr) > 0 and "+" or 
 
 for _, mapping in ipairs(mappings) do
   local mapModifiers, mapTrigger, winFunction = table.unpack(mapping)
-  local hotKeyStr = getModifiersStr(mapModifiers)
-
-  if showHelp == true then
-    if string.len(hotKeyStr) > 0 then
-      msgStr = msgStr .. (string.format("\n%10s+%s => %s", hotKeyStr, mapTrigger, winFunction))
-    else
-      msgStr = msgStr .. (string.format("\n%11s => %s", mapTrigger, winFunction))
-    end
-  end
 
   windowLayoutMode:bindWithAutomaticExit(mapModifiers, mapTrigger, function()
-    local fw = hs.window.focusedWindow()
-    if fw[winFunction] then
-      fw[winFunction](fw)
-    else
-      hs.window[winFunction](fw)
-    end
+    hs.window[winFunction](hs.window.focusedWindow())
   end)
 end
 
