@@ -276,7 +276,16 @@ for _, mapping in ipairs(mappings) do
   local mapModifiers, mapTrigger, winFunction = table.unpack(mapping)
 
   windowLayoutMode:bindWithAutomaticExit(mapModifiers, mapTrigger, function()
-    hs.window[winFunction](hs.window.focusedWindow())
+    local focusedWindow = hs.window.focusedWindow()
+    -- Two index targets, two different tables: native methods (e.g. maximize) live
+    -- on the window object's metatable (instance indexing), while custom layouts are
+    -- assigned onto the hs.window MODULE table. Both branches are load-bearing — do
+    -- NOT collapse to one expression (a prior attempt did and broke half the keys).
+    if focusedWindow[winFunction] then
+      focusedWindow[winFunction](focusedWindow)
+    else
+      hs.window[winFunction](focusedWindow)
+    end
   end)
 end
 

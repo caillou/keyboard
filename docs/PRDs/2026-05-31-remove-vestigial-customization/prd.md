@@ -231,3 +231,29 @@ implementation details, which the glossary deliberately excludes.
   `space-fn.lua`, `status-message.lua`, `.gitignore`, plus `CLAUDE.md`) and
   deletes one (`windows-bindings-defaults.lua`). It is surgical and
   behavior-preserving by intent.
+
+## Errata
+
+The Implementation Decision **"Collapse the window-key dispatch to a single
+expression"** was **reversed** in implementation. Its premise — that "every
+mapped function resolves off the `hs.window` table" and "the `else` branch never
+fired" — is false. Live testing proved the `else` branch is not dead: it is the
+path for every custom layout key. The root cause is two different tables.
+`hs.window[winFunction]` (module-table indexing) resolves the custom layout
+functions (assigned as `function hs.window.<name>`) but **not** native
+`maximize`; `fw[winFunction]` (instance indexing) resolves native methods like
+`maximize` but **not** the custom layouts, because a window object's metatable
+`__index` is the internal C methods table, not the `hs.window` module table. Each
+single-expression form was tried and broke exactly half the keys.
+
+Consequently **User Story 4** ("I want the window-key dispatch to be a single
+expression") is **not achievable and is withdrawn**. The dispatch remains the
+original two-branch form, now carrying a comment documenting why it must not be
+re-collapsed.
+
+The PRD's own **"Risk, called out explicitly"** subsection correctly anticipated
+that this was the one change the spec suite could not cover and that it could
+only be settled by live Hammerspoon verification. That risk materialized: live
+verification failed for the collapsed form, and the change was reverted.
+
+All other decisions in this PRD shipped as written and are behavior-preserving.
