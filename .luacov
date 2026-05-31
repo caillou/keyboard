@@ -1,0 +1,9 @@
+-- luacov config. Scope coverage to this repo's own Lua source (the Engine and
+-- its spec) so the report measures the code we wrote, not the busted/luarocks
+-- machinery under lua_modules/.
+return {
+  include = {
+    "hammerspoon/space%-fn%-engine",
+    "spec/.*",
+  },
+}

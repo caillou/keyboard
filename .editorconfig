@@ -1,0 +1,15 @@
+root = true
+
+# Baseline for every editor. StyLua remains the sole formatter for .lua files;
+# the 2-space indent below matches stylua.toml so EditorConfig never fights it.
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Markdown uses two trailing spaces for hard line breaks, so do not trim them.
+[*.md]
+trim_trailing_whitespace = false

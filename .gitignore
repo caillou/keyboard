@@ -2,6 +2,8 @@ hammerspoon/hyper-apps.lua
 hammerspoon/windows-bindings.lua
 karabiner/automatic_backups
 lua_modules/
+luacov.stats.out
+luacov.report.out
 hammerspoon/Spoons/EmmyLua.spoon/annotations/
 docs/PRDs/2026-05-29-space-fn/reviews/
 docs/PRDs/2026-05-29-lua-dev-tooling/reviews/
