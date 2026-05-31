@@ -22,7 +22,7 @@ loaded at startup; there is no build step. See `CONTEXT.md` for the glossary
 
 ## Subsystems
 
-1. **Window layout mode** — `windows.lua` (+ `windows-bindings*.lua`). A `Ctrl+s`
+1. **Window layout mode** — `windows.lua` (bindings inline). A `Ctrl+s`
    modal that moves/resizes the focused window with single keys. See the header
    comment in `windows.lua` for the design (layout fns attached to `hs.window`,
    why it's hand-rolled, frame-vs-fullFrame).

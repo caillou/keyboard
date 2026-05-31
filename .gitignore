@@ -1,6 +1,3 @@
-hammerspoon/hyper-apps.lua
-hammerspoon/windows-bindings.lua
-karabiner/automatic_backups
 lua_modules/
 luacov.stats.out
 luacov.report.out
@@ -8,3 +5,4 @@ hammerspoon/Spoons/EmmyLua.spoon/annotations/
 docs/PRDs/2026-05-29-space-fn/reviews/
 docs/PRDs/2026-05-29-lua-dev-tooling/reviews/
 docs/PRDs/2026-05-31-dev-tooling-hardening/reviews/
+docs/PRDs/2026-05-31-remove-vestigial-customization/reviews/
