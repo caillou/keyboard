@@ -47,12 +47,10 @@ ignore = {
   '631',
 }
 
--- windows.lua deliberately attaches custom layout functions onto hs.window
--- itself (e.g. hs.window.left, hs.window.upRight) so the modal can look them up
--- dynamically off the window object (see the header comment in windows.lua).
--- Mark hs.window as a writable field here so those assignments aren't flagged
--- as "setting read-only field of global hs". The default read-only `hs` still
--- applies everywhere else.
+-- windows.lua sets `hs.window.animationDuration = 0` (a real Hammerspoon API
+-- setting) so window moves are instant. Mark hs.window as a writable field here
+-- so that assignment isn't flagged as "setting read-only field of global hs".
+-- The default read-only `hs` still applies everywhere else.
 files['hammerspoon/windows.lua'] = {
   globals = { 'hs.window' },
 }

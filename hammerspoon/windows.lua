@@ -1,7 +1,8 @@
--- Window layout mode. Layout functions are attached onto `hs.window` itself
--- (e.g. hs.window.left, hs.window.upRight) so the Ctrl+s modal can bind keys to
--- look them up dynamically off the focused window. (luacheck allows writing to
--- hs.window here via .luacheckrc; LuaLS allows it via a windows.lua carve-out.)
+-- Window layout mode. Layout functions are plain locals; the Ctrl+s modal binds
+-- keys to direct references to them (the `mappings` table below), so the dispatch
+-- is a single uniform call with no `hs.window` namespace pollution. Native
+-- placements (e.g. maximize) are wrapped in a closure so every mapping entry has
+-- the same `function(win)` shape.
 --
 -- Hand-rolled rather than a stock window-manager Spoon (ShiftIt,
 -- WindowHalfsAndThirds, MiroWindowsManager, ...) on purpose: it supports
@@ -21,7 +22,7 @@ hs.window.animationDuration = 0
 -- |  HERE  |        |
 -- |        |        |
 -- +-----------------+
-function hs.window.left(win)
+local function left(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
@@ -38,7 +39,7 @@ end
 -- |        |  HERE  |
 -- |        |        |
 -- +-----------------+
-function hs.window.right(win)
+local function right(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
@@ -55,7 +56,7 @@ end
 -- +-----------------+
 -- |                 |
 -- +-----------------+
-function hs.window.up(win)
+local function up(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
@@ -72,7 +73,7 @@ end
 -- +-----------------+
 -- |      HERE       |
 -- +-----------------+
-function hs.window.down(win)
+local function down(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
@@ -89,7 +90,7 @@ end
 -- +--------+        |
 -- |                 |
 -- +-----------------+
-function hs.window.upLeft(win)
+local function upLeft(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:fullFrame()
@@ -106,7 +107,7 @@ end
 -- +--------+        |
 -- |  HERE  |        |
 -- +-----------------+
-function hs.window.downLeft(win)
+local function downLeft(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:fullFrame()
@@ -123,7 +124,7 @@ end
 -- |        +--------|
 -- |        |  HERE  |
 -- +-----------------+
-function hs.window.downRight(win)
+local function downRight(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:fullFrame()
@@ -141,7 +142,7 @@ end
 -- |        +--------|
 -- |                 |
 -- +-----------------+
-function hs.window.upRight(win)
+local function upRight(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:fullFrame()
@@ -158,7 +159,7 @@ end
 -- |  |  HERE  |  |
 -- |  |        |  |
 -- +---------------+
-function hs.window.centerWithFullHeight(win)
+local function centerWithFullHeight(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:fullFrame()
@@ -175,7 +176,7 @@ end
 -- | HERE |          |
 -- |      |          |
 -- +-----------------+
-function hs.window.left40(win)
+local function left40(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
@@ -192,7 +193,7 @@ end
 -- |      |   HERE   |
 -- |      |          |
 -- +-----------------+
-function hs.window.right60(win)
+local function right60(win)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
@@ -204,7 +205,7 @@ function hs.window.right60(win)
   win:setFrame(f)
 end
 
-function hs.window.nextScreen(win)
+local function nextScreen(win)
   local currentScreen = win:screen()
   local allScreens = hs.screen.allScreens()
   local currentScreenIndex = hs.fnutils.indexOf(allScreens, currentScreen)
@@ -239,23 +240,29 @@ end
 local modifiers = { "ctrl" }
 local trigger = "s"
 local mappings = {
-  { {}, "return", "maximize" },
-  { {}, "space", "centerWithFullHeight" },
-  { {}, "j", "left" },
-  { {}, "k", "down" },
-  { {}, "i", "up" },
-  { {}, "l", "right" },
-  { {}, "left", "left" },
-  { {}, "down", "down" },
-  { {}, "up", "up" },
-  { {}, "right", "right" },
-  { { "shift" }, "j", "left40" },
-  { { "shift" }, "l", "right60" },
-  { {}, "u", "upLeft" },
-  { {}, "o", "upRight" },
-  { {}, "m", "downLeft" },
-  { {}, ".", "downRight" },
-  { {}, "n", "nextScreen" },
+  {
+    {},
+    "return",
+    function(w)
+      w:maximize()
+    end,
+  },
+  { {}, "space", centerWithFullHeight },
+  { {}, "j", left },
+  { {}, "k", down },
+  { {}, "i", up },
+  { {}, "l", right },
+  { {}, "left", left },
+  { {}, "down", down },
+  { {}, "up", up },
+  { {}, "right", right },
+  { { "shift" }, "j", left40 },
+  { { "shift" }, "l", right60 },
+  { {}, "u", upLeft },
+  { {}, "o", upRight },
+  { {}, "m", downLeft },
+  { {}, ".", downRight },
+  { {}, "n", nextScreen },
 }
 
 local function getModifiersStr(mods)
@@ -276,16 +283,7 @@ for _, mapping in ipairs(mappings) do
   local mapModifiers, mapTrigger, winFunction = table.unpack(mapping)
 
   windowLayoutMode:bindWithAutomaticExit(mapModifiers, mapTrigger, function()
-    local focusedWindow = hs.window.focusedWindow()
-    -- Two index targets, two different tables: native methods (e.g. maximize) live
-    -- on the window object's metatable (instance indexing), while custom layouts are
-    -- assigned onto the hs.window MODULE table. Both branches are load-bearing — do
-    -- NOT collapse to one expression (a prior attempt did and broke half the keys).
-    if focusedWindow[winFunction] then
-      focusedWindow[winFunction](focusedWindow)
-    else
-      hs.window[winFunction](focusedWindow)
-    end
+    winFunction(hs.window.focusedWindow())
   end)
 end
 
