@@ -17,6 +17,7 @@ fmt-check:
 
 lint:
 	./lua_modules/bin/luacheck hammerspoon spec
+	shellcheck script/*
 
 update-emmylua:
 	./script/update-emmylua

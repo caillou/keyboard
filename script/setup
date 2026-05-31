@@ -28,7 +28,7 @@ if ! grep -sq "require('keyboard')" ~/.hammerspoon/init.lua; then
   echo "require('keyboard') -- Load Hammerspoon bits from https://github.com/jasonrudolph/keyboard" >> ~/.hammerspoon/init.lua
 fi
 
-ln -sfn $PWD/hammerspoon ~/.hammerspoon/keyboard
+ln -sfn "$PWD"/hammerspoon ~/.hammerspoon/keyboard
 
 # Symlink the vendored EmmyLua.spoon so Hammerspoon loads it from ~/.hammerspoon/Spoons.
 # The generator hardcodes its output to the Spoon's own resourcePath, so this
@@ -40,7 +40,7 @@ EMMYLUA_LINK=~/.hammerspoon/Spoons/EmmyLua.spoon
 # INSIDE it (and the Spoon would silently fail to load), so only replace when
 # the target is a symlink or absent. Never rm -rf a real directory here.
 if [ -L "$EMMYLUA_LINK" ] || [ ! -e "$EMMYLUA_LINK" ]; then
-  ln -sfn $PWD/hammerspoon/Spoons/EmmyLua.spoon "$EMMYLUA_LINK"
+  ln -sfn "$PWD"/hammerspoon/Spoons/EmmyLua.spoon "$EMMYLUA_LINK"
 else
   echo "⚠ $EMMYLUA_LINK is a real directory, not a symlink — leaving it untouched."
   echo "  Remove it yourself and re-run if you want the vendored EmmyLua.spoon symlinked."
