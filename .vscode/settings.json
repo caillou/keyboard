@@ -27,5 +27,16 @@
   "Lua.workspace.library": [
     "${workspaceFolder}/hammerspoon/Spoons/EmmyLua.spoon/annotations"
   ],
-  "Lua.workspace.checkThirdParty": false
+  "Lua.workspace.checkThirdParty": false,
+  "Lua.diagnostics.enable": true,
+  "Lua.diagnostics.neededFileStatus": {
+    "undefined-field": "Any",
+    "param-type-mismatch": "Any",
+    "assign-type-mismatch": "Any",
+    "cast-local-type": "Opened"
+  },
+  "Lua.diagnostics.severity": {
+    "undefined-field": "Error"
+  },
+  "makefile.configureOnOpen": false
 }
