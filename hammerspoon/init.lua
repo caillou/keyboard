@@ -1,11 +1,16 @@
--- Install the `hs` CLI tool into ~/.local — XDG path, no sudo needed. See CLAUDE.md.
+-- Install the `hs` CLI tool into ~/.local — XDG path, no sudo needed. Lets the
+-- config be reloaded/inspected from a terminal: `hs -c "hs.reload()"`.
+-- cliInstall refuses to repair a half-installed state: if
+-- `hs.ipc.cliStatus(os.getenv('HOME') .. '/.local')` returns false even though
+-- `hs -c "1+1"` works, run `hs.ipc.cliUninstall(...)` then reload — do not just
+-- re-run cliInstall.
 require("hs.ipc")
 hs.ipc.cliInstall(os.getenv("HOME") .. "/.local")
 
 -- Generate EmmyLua annotation stubs for hs.* editor autocomplete (dev tooling).
 -- The generator runs as a side effect of the Spoon's :init(); a missing Spoon
 -- is a no-op. Loaded before the pathwatchers below so its generated files don't
--- race the reload watcher. See CLAUDE.md "Editor and tooling".
+-- race the reload watcher.
 pcall(hs.loadSpoon, "EmmyLua")
 
 -- Use Shift+Control+` to reload Hammerspoon config

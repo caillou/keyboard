@@ -1,2 +1,5 @@
+# StyLua is the sole formatter. Only 2-space indentation is overridden here;
+# everything else follows StyLua defaults (double quotes, 120 columns) — the
+# modern Lua/Neovim convention. Vendored code is excluded via .styluaignore.
 indent_type = "Spaces"
 indent_width = 2

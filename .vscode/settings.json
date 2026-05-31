@@ -1,4 +1,7 @@
 {
+  // StyLua owns all Lua formatting (format-on-save below). LuaLS's own
+  // formatter is disabled so the two never fight — the eslint-config-prettier
+  // pattern. Keep Lua.format.enable false.
   "[lua]": {
     "editor.defaultFormatter": "JohnnyMorganz.stylua",
     "editor.formatOnSave": true
@@ -29,6 +32,10 @@
   ],
   "Lua.workspace.checkThirdParty": false,
   "Lua.diagnostics.enable": true,
+  // Moderate diagnostics. undefined-field is raised to Error (below) so a
+  // mistyped space-fn-engine token surfaces as a red error instead of silently
+  // falling through to a default. Strict global mode is avoided — it floods
+  // false positives against the Engine's setmetatable({}, {__index = M}) pattern.
   "Lua.diagnostics.neededFileStatus": {
     "undefined-field": "Any",
     "param-type-mismatch": "Any",

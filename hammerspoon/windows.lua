@@ -1,3 +1,19 @@
+-- Window layout mode. Layout functions are attached onto `hs.window` itself
+-- (e.g. hs.window.left, hs.window.upRight) so the Ctrl+s modal can bind keys to
+-- look them up dynamically off the focused window. (luacheck allows writing to
+-- hs.window here via .luacheckrc; LuaLS allows it via a windows.lua carve-out.)
+--
+-- Hand-rolled rather than a stock window-manager Spoon (ShiftIt,
+-- WindowHalfsAndThirds, MiroWindowsManager, ...) on purpose: it supports
+-- non-standard layouts (left40, right60, centerWithFullHeight) those Spoons
+-- don't, so swapping one in would be a regression. That capability is the bar
+-- to clear if you ever reconsider.
+--
+-- frame() vs fullFrame() is a deliberate per-function choice: frame() excludes
+-- the menu bar/dock (used by the half-screen layouts), fullFrame() is the whole
+-- display (used by the quarter-screen layouts).
+
+-- Disable animation globally so window moves are instant.
 hs.window.animationDuration = 0
 
 -- +-----------------+

@@ -10,8 +10,8 @@
 -- to `hs` itself is still caught.
 read_globals = { 'hs' }
 
--- Deliberate top-level globals (see CLAUDE.md). They MUST be globals, not
--- locals: the pathwatchers would otherwise be garbage-collected and stop
+-- Deliberate top-level globals (defined in hammerspoon/init.lua). They MUST be
+-- globals, not locals: the pathwatchers would otherwise be garbage-collected and stop
 -- firing, and keyUpDown / enableHotkeyForWindowsMatchingFilter are intended as
 -- module-level helpers callable from other files. Declared here so luacheck
 -- treats them as known writable globals instead of flagging the assignment.
@@ -51,8 +51,8 @@ ignore = {
 }
 
 -- windows.lua deliberately attaches custom layout functions onto hs.window
--- itself (e.g. hs.window.left, hs.window.upRight) — a documented pattern in
--- CLAUDE.md so the modal can look them up dynamically off the window object.
+-- itself (e.g. hs.window.left, hs.window.upRight) so the modal can look them up
+-- dynamically off the window object (see the header comment in windows.lua).
 -- Mark hs.window as a writable field here so those assignments aren't flagged
 -- as "setting read-only field of global hs". The default read-only `hs` still
 -- applies everywhere else.
