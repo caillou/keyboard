@@ -28,7 +28,10 @@
     "hammerspoon/?/init.lua"
   ],
   "Lua.workspace.library": [
-    "${workspaceFolder}/hammerspoon/Spoons/EmmyLua.spoon/annotations"
+    "${workspaceFolder}/hammerspoon/Spoons/EmmyLua.spoon/annotations",
+    // luassert (busted's `assert`) types, so `assert.same` et al. aren't flagged
+    // undefined-field. See types/busted.lua for why a definition file is needed.
+    "${workspaceFolder}/types"
   ],
   "Lua.workspace.checkThirdParty": false,
   "Lua.diagnostics.enable": true,
