@@ -10,13 +10,15 @@
 -- to `hs` itself is still caught.
 read_globals = { 'hs' }
 
--- Deliberate top-level globals (defined in hammerspoon/init.lua). They MUST be
--- globals, not locals: the pathwatchers would otherwise be garbage-collected and
--- stop firing. Declared here so luacheck treats them as known writable globals
--- instead of flagging the assignment.
+-- Deliberate top-level globals (the pathwatchers in hammerspoon/init.lua, the app
+-- watcher in hammerspoon/windows.lua). They MUST be globals, not locals: the
+-- watchers would otherwise be garbage-collected and stop firing. Declared here so
+-- luacheck treats them as known writable globals instead of flagging the
+-- assignment.
 globals = {
   'configWatcher',
   'keyboardWatcher',
+  'windowLayoutAppWatcher',
 }
 
 -- Let StyLua own line length and spacing.

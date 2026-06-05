@@ -291,9 +291,39 @@ local message = require("keyboard.status-message")
 windowLayoutMode.statusMessage = message.new(msgStr)
 
 -- Use modifiers+trigger to toggle WindowLayout Mode
-hs.hotkey.bind(modifiers, trigger, function()
+local enterHotkey = hs.hotkey.bind(modifiers, trigger, function()
   windowLayoutMode:enter()
 end)
 windowLayoutMode:bind(modifiers, trigger, function()
   windowLayoutMode:exit()
 end)
+
+-- Windows App (Microsoft Remote Desktop; the new app reuses the legacy
+-- com.microsoft.rdc.macos bundle id) needs Ctrl+s for its own remote session
+-- (Save). hs.hotkey swallows the key, so merely declining to enter the modal
+-- wouldn't pass it through -- the hotkey itself must be released. So disable it
+-- while that app is frontmost and re-enable it otherwise.
+--
+-- Level-triggered, not edge-triggered: listen only to `activated` and recompute
+-- the enabled state from the current frontmost app each time, rather than
+-- disabling on activate / enabling on deactivate. Recomputing from the source of
+-- truth on every focus change is self-correcting -- it can't get stuck disabled
+-- if a deactivate is ever missed (e.g. the app crashes while frontmost); the next
+-- focus change reconciles it. The same function primes the state once at load.
+local PASSTHROUGH_BUNDLE_ID = "com.microsoft.rdc.macos"
+local function syncTrigger(app)
+  if app and app:bundleID() == PASSTHROUGH_BUNDLE_ID then
+    enterHotkey:disable()
+  else
+    enterHotkey:enable()
+  end
+end
+
+-- global on purpose: local would be GC'd and stop the watcher
+windowLayoutAppWatcher = hs.application.watcher.new(function(_, eventType, app)
+  if eventType == hs.application.watcher.activated then
+    syncTrigger(app)
+  end
+end)
+windowLayoutAppWatcher:start()
+syncTrigger(hs.application.frontmostApplication())
