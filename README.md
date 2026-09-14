@@ -1,3 +1,7 @@
+This repository is archived and no longer maintained here. Its content now lives in
+[caillou/dotfiles](https://github.com/caillou/dotfiles), where the Hammerspoon files
+are kept under `dot_hammerspoon/`.
+
 ## Toward a more useful keyboard
 
 Personal macOS keyboard customization, built on [Hammerspoon](https://www.hammerspoon.org/). Two features:
